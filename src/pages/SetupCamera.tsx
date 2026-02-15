@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Webcam from "react-webcam";
 import PageHeader from "../components/PageHeader";
@@ -9,9 +9,7 @@ const SETUP_DONE_KEY = "puzzled_camera_setup_done";
 
 export default function SetupCameraPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const state = location.state as { tutorialId?: string } | null;
-  const tutorialId = state?.tutorialId ?? "treehacks";
+  const { tutorialId } = useParams();
   const { t } = useTranslation(['camera', 'common']);
 
   const [permissionGranted, setPermissionGranted] = useState(false);
@@ -33,7 +31,7 @@ export default function SetupCameraPage() {
       localStorage.setItem(SETUP_DONE_KEY, "true");
     } catch {}
 
-    navigate("/instruction", { replace: true, state: { tutorialId } });
+    navigate(`/instruction/${tutorialId}`);
   };
 
   const handleBack = () => {

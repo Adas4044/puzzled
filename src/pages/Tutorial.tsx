@@ -125,7 +125,9 @@ export default function Tutorial() {
                   )}
 
                   <button
-                    onClick={() => navigate("/camerasetup", { state: { tutorialId: tutorial.id } })}
+                    onClick={() => {
+                      navigate(`/camerasetup/${tutorial.id}`);
+                    }}
                     className="w-full bg-[#AF69EE] text-white px-4 py-2 rounded-xl text-sm font-medium transition active:scale-95"
                   >
                     {t('tutorial:startTutorial')}
