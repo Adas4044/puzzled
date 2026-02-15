@@ -6,6 +6,11 @@ const RUNPOD_URL = import.meta.env.VITE_RUNPOD_URL;
 const RUNPOD_API_KEY = import.meta.env.VITE_RUNPOD_API_KEY;
 const USE_RUNPOD = import.meta.env.VITE_USE_RUNPOD === "true";
 
+// Detector type: "claude" or "siamese"
+// - claude: Uses Claude Vision API (better accuracy, handles different angles)
+// - siamese: Uses local Siamese network (faster, no API cost, needs consistent angles)
+const DETECTOR_TYPE: "claude" | "siamese" = "claude";
+
 export default function PreviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,6 +66,7 @@ export default function PreviewPage() {
         const form = new FormData();
         form.append("image", file);
         form.append("stepId", String(stepId));
+        form.append("detector_type", DETECTOR_TYPE);
 
         const response = await fetch(`${API_URL}/verify/verify-step`, {
           method: "POST",
@@ -133,6 +139,7 @@ export default function PreviewPage() {
       <div style={{ marginTop: 12 }}>
         <img src={imageSrc} alt="Preview" style={{ width: "100%", borderRadius: 12 }} />
       </div>
+
 
       {feedback && (
         <div style={{ marginTop: 12, padding: 12, borderRadius: 8, backgroundColor: "#f3f3f3" }}>

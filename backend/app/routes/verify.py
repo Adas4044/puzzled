@@ -1,11 +1,12 @@
 """
 Step Verification Routes
 Handles image upload and verification against reference steps.
+Supports both Claude Vision and Siamese Network detectors.
 """
 
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Literal
 from collections import deque
 
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException
@@ -14,6 +15,16 @@ from pydantic import BaseModel
 from app.services.detector import get_detector, VerificationResult
 
 logger = logging.getLogger(__name__)
+
+# Lazy import siamese detector to avoid loading PyTorch if not needed
+_siamese_detector = None
+
+def get_siamese():
+    global _siamese_detector
+    if _siamese_detector is None:
+        from app.services.siamese_detector import get_siamese_detector
+        _siamese_detector = get_siamese_detector()
+    return _siamese_detector
 
 router = APIRouter(prefix="/verify", tags=["verification"])
 
@@ -40,15 +51,17 @@ class VerificationLog(BaseModel):
 @router.post("/verify-step", response_model=VerifyResponse)
 async def verify_step(
     image: UploadFile = File(...),
-    stepId: int = Form(...)
+    stepId: int = Form(...),
+    detector_type: str = Form(default="claude")
 ):
     """
     Verify a captured image against a reference step.
 
     - **image**: JPEG image file from camera
     - **stepId**: The step number to verify against
+    - **detector_type**: "claude" or "siamese" (default: claude)
     """
-    logger.info(f"Received verification request for step {stepId}")
+    logger.info(f"Received verification request for step {stepId} using {detector_type} detector")
 
     # Validate file type
     if not image.content_type or not image.content_type.startswith("image/"):
@@ -59,9 +72,13 @@ async def verify_step(
         image_bytes = await image.read()
         logger.info(f"Image size: {len(image_bytes)} bytes")
 
-        # Get detector and verify
-        detector = get_detector()
-        result: VerificationResult = detector.verify_step(image_bytes, stepId)
+        # Get appropriate detector and verify
+        if detector_type == "siamese":
+            detector = get_siamese()
+        else:
+            detector = get_detector()
+
+        result = detector.verify_step(image_bytes, stepId)
 
         timestamp = datetime.now().isoformat()
 

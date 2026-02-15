@@ -394,12 +394,13 @@ class SiameseDetector:
         print(f"Batch size: {batch_size}")
         print()
 
-        # Training augmentation with heavy brightness variation
+        # Training augmentation with heavy brightness variation and full rotation
         train_transform = transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.RandomRotation(25),
+            transforms.RandomRotation(180),  # Full rotation to handle any orientation
             transforms.CenterCrop(224),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),  # Also flip vertically
             # Heavy brightness/contrast variation to learn invariance
             transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.3, hue=0.1),
             transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.9, 1.1)),
