@@ -1,200 +1,105 @@
-# TreeHacks 2026 - On-Call Help System
+# Puzzled
 
-A hackathon project with a React + TypeScript frontend and Python FastAPI backend that creates instant Zoom meetings for help requests.
+**40-70% of medical devices in low and middle-income countries are broken.** Not because they're useless, but because technicians lack training and repair guidance in their language.
 
-## 🚀 Features
+**Puzzled turns any phone camera into an AI-powered repair assistant** — making manuals make sense, one step at a time.
 
-- **Instant Help**: Click "Get Help" button to generate a Zoom meeting instantly
-- **Zoom Integration**: Server-to-Server OAuth with automatic token management
-- **Modern Stack**: React 19 + TypeScript + Vite frontend, FastAPI backend
-- **Type-Safe**: Full TypeScript support with Pydantic models on the backend
+## How It Works
 
-## 📋 Prerequisites
+1. **Select your language** — Supports languages via AI translation
+2. **Choose a repair tutorial** — Browse visual guides for medical equipment
+3. **Follow step-by-step instructions** — Your camera verifies each step in real-time using AI
+4. **Get unstuck instantly** — One tap connects you to a remote expert via Zoom
 
-- **Node.js** 18+ and npm
-- **Python** 3.11+
-- **Zoom Account** with Server-to-Server OAuth app ([Create one here](https://marketplace.zoom.us/develop/create))
+**The magic:** Our AI learns from just 2-3 images per step (few-shot learning), making it practical to create guides for any device.
 
-## 🛠️ Project Structure
+## What Makes It Different
 
-```
-TreeHacks26/
-├── src/                      # React frontend
-│   ├── components/          # React components
-│   │   └── HelpButton.tsx   # Help request button
-│   ├── services/            # API client
-│   │   └── api.ts
-│   ├── types/               # TypeScript types
-│   │   └── api.ts
-│   └── App.tsx              # Main app component
-├── backend/                  # Python FastAPI backend
-│   └── app/
-│       ├── main.py          # FastAPI entry point
-│       ├── config.py        # Environment configuration
-│       ├── routes/          # API endpoints
-│       │   └── help.py      # /api/help endpoint
-│       ├── services/        # Business logic
-│       │   └── zoom_client.py  # Zoom API integration
-│       └── models/          # Data models
-│           └── schemas.py   # Pydantic schemas
-└── README.md
-```
+### Dual AI Verification
+- **Siamese Neural Network** (ResNet18): inference, embeddings, cosine similarity verification
+- **Claude Vision API**: Natural language feedback on *why* a step is incorrect
+- **CLAHE normalization**: Works in poor lighting conditions (critical for field use)
 
-## 🎯 Quick Start
+### Built For The Real World
+- **Few-shot learning**: Create new guides with just 2-3 photos per step
+- **Multilingual**: Instant translation to 100+ languages via MyMemory API + i18next
+- **Expert escalation**: One-tap Zoom integration with Server-to-Server OAuth
+- **Mobile-first**: Native camera integration, works on any smartphone
 
-### 1. Frontend Setup
+**Stack:** React 19 • TypeScript • Tailwind • FastAPI • PyTorch (ResNet18) • Claude Vision • Supabase • Zoom API
 
+## Quick Start
+
+**Frontend:**
 ```bash
-# Install dependencies
 npm install
-
-# Create environment file (optional for local dev)
-cp .env.example .env
-
-# Start development server
 npm run dev
+# Runs on http://localhost:5173
 ```
 
-Frontend runs on: http://localhost:5173
-
-### 2. Backend Setup
-
-Quick setup (for full details, see [backend/README.md](backend/README.md)):
-
+**Backend:**
 ```bash
 cd backend
-
-# Create and activate virtual environment
 python3 -m venv venv
-source venv/bin/activate  # macOS/Linux (or venv\Scripts\activate on Windows)
-
-# Install dependencies
+source venv/bin/activate  # macOS/Linux (venv\Scripts\activate on Windows)
 pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your Zoom credentials (get them from https://marketplace.zoom.us/develop/create)
+# Edit .env with your Zoom API credentials from https://marketplace.zoom.us/develop/create
 
-# Run server
+# Start server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Runs on http://localhost:8000
 ```
 
-Backend runs on: http://localhost:8000
+**Test it:** Visit http://localhost:5173, select a tutorial, and try the camera verification!
 
-📚 **For detailed backend documentation, troubleshooting, and development guides, see [backend/README.md](backend/README.md)**
+📚 **Detailed setup, troubleshooting, and development guides:** [backend/README.md](backend/README.md)
 
-### 3. Test the Integration
-
-1. Open http://localhost:5173 in your browser
-2. Click the **"Get Help"** button
-3. A new tab should open with your Zoom meeting URL!
-
-## 🧑‍💻 Development Workflow
-
-### Running Both Servers
-
-You'll need **two terminal windows**:
-
-**Terminal 1 - Backend:**
-```bash
-cd backend
-source venv/bin/activate
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-**Terminal 2 - Frontend:**
-```bash
-# From project root
-npm run dev
-```
-
-### Adding Backend Features
-
-See [backend/README.md](backend/README.md) for detailed instructions on:
-- Setting up your development environment
-- Adding new API endpoints
-- Code structure and best practices
-- Testing your changes
-
-## 📡 API Endpoints
+## API Reference
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/` | GET | API information |
-| `/health` | GET | Health check for monitoring |
+| `/verify/verify-step` | POST | Verify camera image against reference step |
+| `/api/help` | POST | Create instant Zoom meeting with expert |
+| `/verify/dashboard` | GET | Real-time verification monitoring dashboard |
 | `/docs` | GET | Interactive API documentation |
-| `/api/help` | POST | Create Zoom help meeting |
 
-### Example: Create Meeting
+**Interactive docs:** http://localhost:8000/docs
 
-```bash
-curl -X POST http://localhost:8000/api/help
-```
-
-Response:
-```json
-{
-  "joinUrl": "https://zoom.us/j/123456789",
-  "startUrl": "https://zoom.us/s/123456789?zak=...",
-  "meetingId": "123456789"
-}
-```
-
-## 🚢 Deployment
+## Deployment
 
 ### Backend (Render)
+**Build Command:** `cd backend && pip install -r requirements.txt`
+**Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
-- **Build Command:** `cd backend && pip install -r requirements.txt`
-- **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- **Environment Variables:** Add Zoom credentials and `CORS_ORIGINS`
+**Required Environment Variables:**
+- `ZOOM_ACCOUNT_ID`
+- `ZOOM_CLIENT_ID`
+- `ZOOM_CLIENT_SECRET`
+- `CORS_ORIGINS`
+- `ANTHROPIC_API_KEY`
 
-For detailed deployment instructions and environment variable configuration, see [backend/README.md](backend/README.md)
+For detailed deployment instructions, see [backend/README.md](backend/README.md)
 
-### Frontend (Render Static Site or Vercel)
+### Frontend (Vercel/Render Static Site)
+**Build Command:** `npm run build`
+**Publish Directory:** `dist`
 
-- **Build Command:** `npm run build`
-- **Publish Directory:** `dist`
-- **Environment Variable:** `VITE_API_BASE_URL=https://your-backend.onrender.com`
+**Environment Variables:**
+- `VITE_API_BASE_URL=https://your-backend.onrender.com`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
-## 🔧 Troubleshooting
+## Built At TreeHacks 2026
 
-### Common Issues
+**Problem:** Medical devices sit broken in clinics across low and middle-income countries while technicians lack training resources in their language.
 
-**CORS Errors:** Check that `CORS_ORIGINS` in `backend/.env` includes your frontend URL (`http://localhost:5173`)
+**Solution:** AI-powered visual repair guides that work on any phone, in any language, with instant expert backup.
 
-**Port Already in Use:** If port 8000 is taken, kill the process:
-```bash
-lsof -ti:8000 | xargs kill -9  # macOS/Linux
-```
+**Impact:** Instead of donating more devices, we help countries fix the ones they already have.
 
-**Frontend can't connect:** Make sure both servers are running in separate terminals
+---
 
-For detailed backend troubleshooting (virtual environment, Zoom API errors, etc.), see [backend/README.md](backend/README.md)
-
-## 🤝 Contributing
-
-1. Test your changes locally before pushing
-2. For backend work, see [backend/README.md](backend/README.md) for development guidelines
-3. For frontend work, ensure TypeScript types are properly defined
-4. Use the interactive API docs at `/docs` for backend testing
-
-## 📝 Tech Stack
-
-**Frontend:**
-- React 19
-- TypeScript
-- Vite
-- Native fetch API
-
-**Backend:**
-- Python 3.11+
-- FastAPI
-- Pydantic
-- httpx (async HTTP client)
-- uvicorn (ASGI server)
-
-**Infrastructure:**
-- Zoom Meeting API (Server-to-Server OAuth)
-- Render (deployment)
-
-
+**Tech Stack:** React 19 • TypeScript • Tailwind CSS • Vite • FastAPI • PyTorch • ResNet18 • Claude Sonnet 4 • Supabase • Zoom API • i18next • MyMemory Translation API
