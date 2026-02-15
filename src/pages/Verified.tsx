@@ -1,22 +1,40 @@
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface VerifiedProps {
   activeStep: number;
   totalSteps: number;
 }
 
-export default function Verified({ activeStep, totalSteps }: VerifiedProps) {
+type VerifiedState = {
+  activeStep?: number;
+  totalSteps?: number;
+  nextStepNumber?: number;
+  tutorialId?: string;
+} | null;
+
+export default function Verified({ activeStep: propStep, totalSteps: propTotal }: VerifiedProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as VerifiedState;
+
+  const activeStep = state?.activeStep ?? propStep;
+  const totalSteps = state?.totalSteps ?? propTotal;
+  const nextStepNumber = state?.nextStepNumber ?? activeStep;
+  const tutorialId = state?.tutorialId ?? "treehacks";
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/instruction");
+      if (nextStepNumber > totalSteps) {
+        navigate("/alldone");
+      } else {
+        navigate("/instruction", { state: { stepNumber: nextStepNumber, tutorialId } });
+      }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, nextStepNumber, totalSteps, tutorialId]);
 
   return (
     <div className="h-[100dvh] w-full bg-[#F8F5FF] flex flex-col items-center justify-center gap-6 px-6 text-center">

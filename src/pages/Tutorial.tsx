@@ -45,10 +45,13 @@ export default function Tutorial() {
   }, [i18n.language, t]);
 
   const handleRetry = () => window.location.reload();
+  const handleBack = () => {
+    navigate("/");
+  }
 
   return (
     <div className="min-h-screen flex flex-col w-full px-6 py-10 gap-8">
-      <PageHeader backTo="/" />
+      <PageHeader onBack={handleBack} />
       <h2 className="text-3xl font-bold text-gray-700 text-center">
         {t('tutorial:title')}
       </h2>
@@ -122,7 +125,9 @@ export default function Tutorial() {
                   )}
 
                   <button
-                    onClick={() => navigate("/camerasetup", { state: { tutorialId: tutorial.id } })}
+                    onClick={() => {
+                      navigate(`/camerasetup/${tutorial.id}`);
+                    }}
                     className="w-full bg-[#AF69EE] text-white px-4 py-2 rounded-xl text-sm font-medium transition active:scale-95"
                   >
                     {t('tutorial:startTutorial')}

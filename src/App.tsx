@@ -17,8 +17,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Language />} />
         <Route path="/tutorial" element={<Tutorial />} />
-        <Route path="/camerasetup" element={<SetupCamera />} />
-        <Route path="/instruction" element={<Instruction />} />
+        <Route path="/camerasetup/:tutorialId" element={<SetupCamera />} />
+        <Route path="/instruction/:tutorialId" element={<Instruction />} />
         <Route path="/camera-step-completion" element={<CameraStepCompletion />} />
         <Route path="/preview" element={<Preview />} />
         <Route path="/zoom" element={<Zoom />} />

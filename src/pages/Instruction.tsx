@@ -1,7 +1,7 @@
 import InstructionStepper from "../components/InstructionStepper";
 import PageHeader from "../components/PageHeader";
 import InstructionDefaultImg from "../assets/instruction-default.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
@@ -9,16 +9,25 @@ import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline"
 export default function Instruction() {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { tutorialId?: string } | null;
+  const state = location.state as { tutorialId?: string; stepNumber?: number } | null;
   const tutorialId = state?.tutorialId ?? "treehacks";
   const { t } = useTranslation(['instruction', 'common']);
 
   const totalSteps = 5;
-  const [stepNumber, setStepNumber] = useState(1);
+  const [stepNumber, setStepNumber] = useState(() => state?.stepNumber ?? 1);
+
+  useEffect(() => {
+    const stepFromState = (location.state as { stepNumber?: number } | null)?.stepNumber;
+    if (typeof stepFromState === "number") setStepNumber(stepFromState);
+  }, [location.state]);
 
   const handleStepComplete = () => {
     // send the step id and tutorial id to the camera completion page
     navigate("/camera-step-completion", { state: { stepId: stepNumber, tutorialId } });
+  };
+
+  const goToAllDone = () => {
+    navigate("/alldone");
   };
 
   const handleLiveHelp = () => {
@@ -26,16 +35,25 @@ export default function Instruction() {
   };
 
   const handleOverride = () => {
-    setStepNumber(prev => prev + 1);
-    navigate("/instruction");
-    // TODO: Keep in mind clicking BACK for overridden step will show weird behavior???
+    if (stepNumber >= totalSteps) {
+      // done with all steps
+      goToAllDone();
+      return;
+    }
+    setStepNumber((prev) => Math.min(prev + 1, totalSteps));
   }
 
-  // TODO: clicking BACK should decrement step count
+    const handleBack = () => {
+    if (stepNumber <= 1) {
+      navigate("/camerasetup");
+      return;
+    }
+    setStepNumber((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/camerasetup" />
+      <PageHeader onBack={handleBack} />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
