@@ -63,6 +63,11 @@ export default function PreviewPage() {
     navigate(`/camera-step-completion/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
   }
 
+  const handleLiveHelp = () => {
+  navigate("/help");
+};
+
+
   if (!state) {
     return (
       <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
@@ -232,27 +237,39 @@ export default function PreviewPage() {
           )}
 
           {/* Case 2: Wrong – Try again (→ instructions) + Override link */}
-          {isWrong && (
-            <div className="flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleTryAgain}
-                className="w-full py-3 px-4 rounded-xl font-medium text-sm shadow-md active:scale-95 transition
-                           bg-white border-2 border-gray-300 text-gray-800 hover:shadow-lg"
-              >
-                Try again
-              </button>
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={handleOverrideAndContinue}
-                  className="text-sm text-gray-600 underline hover:text-[#AF69EE] transition"
-                >
-                  Override and continue to next step
-                </button>
-              </div>
-            </div>
-          )}
+    {isWrong && (
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={handleTryAgain}
+          className="w-full py-3 px-4 rounded-xl font-medium text-sm shadow-md active:scale-95 transition
+                    bg-white border-2 border-gray-300 text-gray-800 hover:shadow-lg"
+        >
+          Try again
+        </button>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={handleOverrideAndContinue}
+            className="text-sm text-gray-600 underline hover:text-[#AF69EE] transition"
+          >
+            Override and continue to next step
+          </button>
+        </div>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={handleLiveHelp}
+            className="text-sm text-gray-700 font-medium hover:text-[#AF69EE] transition"
+          >
+            Stuck? Get live help
+          </button>
+        </div>
+      </div>
+    )}
+
 
           {/* Before verification: Retake photo + Verify */}
           {match === null && (
