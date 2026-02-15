@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Language language={language} setLanguage={setLanguage} />} />
         <Route path="/tutorial" element={<Tutorial language={language} setLanguage={setLanguage} />} />
-        <Route path="/camerasetup" element={<SetupCamera />} />
+        <Route path="/camerasetup" element={<SetupCamera language={language} setLanguage={setLanguage}/>} />
         <Route path="/instruction" element={<Instruction language={language} setLanguage={setLanguage}/>} />
         <Route path="/camera" element={<Camera />} />
         <Route path="/preview" element={<Preview />} />

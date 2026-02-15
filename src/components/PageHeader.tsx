@@ -23,7 +23,7 @@ export default function PageHeader({
         onClick={() => navigate(backTo)}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
       >
-        <ArrowLeftIcon className="w-5 h-5" />
+        <ArrowLeftIcon className="w-5 h-5 stroke-2" />
         <span className="text-sm font-medium">Back</span>
       </button>
 
