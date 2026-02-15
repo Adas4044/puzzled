@@ -22,7 +22,7 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
   };
 
   const handleLiveHelp = () => {
-    navigate("/live-help");
+    navigate("/help");
   };
 
   return (
