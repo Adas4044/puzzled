@@ -149,11 +149,6 @@ export default function PreviewPage() {
   };
   const newStepID = Math.min(stepId + 1, totalSteps);
 
-  const handleContinueToNextStep = () => {
-    navigate(`/instruction/${routeTutorialId}/${newStepID}`, {
-      state: { activeStep: stepId, totalSteps, nextStepNumber: newStepID, routeTutorialId },
-    });
-  };
 
   const goToAllDone = () => {
     navigate("/alldone");
@@ -227,7 +222,7 @@ export default function PreviewPage() {
             <div className="flex flex-col gap-3">
               <button
                 type="button"
-                onClick={handleContinueToNextStep}
+                onClick={handleOverrideAndContinue}
                 className="w-full py-3 px-4 rounded-xl font-medium text-sm shadow-lg active:scale-95 transition
                            bg-green-600 text-white hover:bg-green-700 hover:shadow-xl"
               >
