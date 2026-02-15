@@ -14,7 +14,7 @@ export default function Instruction() {
   const { t } = useTranslation(['instruction', 'common']);
 
   const totalSteps = 5;
-  const [stepNumber] = useState(1);
+  const [stepNumber, setStepNumber] = useState(1);
 
   const handleStepComplete = () => {
     // send the step id and tutorial id to the camera completion page
@@ -24,6 +24,14 @@ export default function Instruction() {
   const handleLiveHelp = () => {
     navigate("/help");
   };
+
+  const handleOverride = () => {
+    setStepNumber(prev => prev + 1);
+    navigate("/instruction");
+    // TODO: Keep in mind clicking BACK for overridden step will show weird behavior???
+  }
+
+  // TODO: clicking BACK should decrement step count
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
@@ -89,6 +97,15 @@ export default function Instruction() {
               {t('instruction:getLiveHelp')}
             </button>
           </div>
+          <div className="mt-3 text-center">
+      <button
+        type="button"
+        className="text-xs text-gray-500 underline"
+        onClick={handleOverride}
+      >
+        Already completed? Skip to next step
+      </button>
+</div>
         </div>
       </div>
     </div>
