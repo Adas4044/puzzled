@@ -9,6 +9,7 @@ import SetupCamera from "./pages/SetupCamera";
 import Tutorial from "./pages/Tutorial";
 import Verified from "./pages/Verified";
 import Zoom from "./pages/Zoom";
+import Help from "./pages/Help";
 
 function App() {
   const [language, setLanguage] = useState<string>("en");
@@ -24,6 +25,7 @@ function App() {
         <Route path="/zoom" element={<Zoom />} />
         <Route path="/analyzing" element={<Analyzing/>} />
         <Route path="/verified" element={<Verified activeStep={1} totalSteps={5}/>} />
+        <Route path="/help" element={<Help language={language} setLanguage={setLanguage}/>} />
       </Routes>
     </BrowserRouter>
   );
