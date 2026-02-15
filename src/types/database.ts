@@ -16,8 +16,8 @@ export interface StepRow {
   id: string;
   tutorial_id: string;
   step_number: number;
-  description: string | null;
-  photo_url: string | null;
+  instruction_url: string | null;
+  step_url: string | null;
   created_at: string;
 }
 
@@ -35,8 +35,8 @@ export interface Tutorial {
 export interface TutorialStep {
   id: string;
   stepNumber: number;
-  description: string | null;
-  photoUrl: string | null;
+  instructionUrl: string | null;
+  stepUrl: string | null;
   createdAt: Date;
 }
 

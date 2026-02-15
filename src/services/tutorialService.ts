@@ -95,8 +95,8 @@ export async function fetchTutorialWithSteps(
     steps: sortedSteps.map((step: StepRow) => ({
       id: step.id,
       stepNumber: step.step_number,
-      description: step.description,
-      photoUrl: step.photo_url,
+      instructionUrl: step.instruction_url,
+      stepUrl: step.step_url,
       createdAt: new Date(step.created_at),
     })),
   };
