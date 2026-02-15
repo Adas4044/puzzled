@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Analyzing from "./pages/Analyzing";
 import CameraStepCompletion from "./pages/CameraStepCompletion";
 import Instruction from "./pages/Instruction";
+import Landing from "./pages/Landing.tsx";
 import Language from "./pages/Language";
 import Preview from "./pages/Preview";
 import SetupCamera from "./pages/SetupCamera";
@@ -15,7 +16,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Language />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/language" element={<Language />} />
         <Route path="/tutorial" element={<Tutorial />} />
         <Route path="/camerasetup/:tutorialId" element={<SetupCamera />} />
         <Route path="/instruction/:tutorialId" element={<Instruction />} />
