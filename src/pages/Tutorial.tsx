@@ -10,15 +10,13 @@ interface TutorialProps {
   setLanguage: (lang: string) => void;
 }
 
-export default function Tutorial({language, setLanguage}: TutorialProps) {
+export default function Tutorial({ language, setLanguage }: TutorialProps) {
   const navigate = useNavigate();
 
-  // State management
   const [tutorials, setTutorials] = useState<TutorialType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch tutorials on component mount
   useEffect(() => {
     async function loadTutorials() {
       try {
@@ -27,12 +25,8 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
         const data = await fetchAllTutorials();
         setTutorials(data);
       } catch (err) {
-        if (err instanceof ApiError) {
-          setError(err.message);
-        } else {
-          setError('An unexpected error occurred');
-        }
-        console.error('Error loading tutorials:', err);
+        setError(err instanceof ApiError ? err.message : "An unexpected error occurred");
+        console.error("Error loading tutorials:", err);
       } finally {
         setLoading(false);
       }
@@ -41,9 +35,12 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
     loadTutorials();
   }, []);
 
+  const handleRetry = () => window.location.reload();
+
   return (
-    <div className="min-h-screen flex flex-col w-full px-6 pt-10 gap-8 bg-[#F5F5F5]">
-      <PageHeader backTo="/" language={language} setLanguage={setLanguage}/>
+    <div className="min-h-screen flex flex-col w-full px-6 py-10 gap-8">
+      <PageHeader backTo="/" language={language} setLanguage={setLanguage} />
+
       <h2 className="text-3xl font-bold text-gray-700 text-center">
         Select Tutorial
       </h2>
@@ -51,19 +48,20 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
       {/* Loading state */}
       {loading && (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#AF69EE]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#AF69EE]" />
         </div>
       )}
 
       {/* Error state */}
       {error && !loading && (
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-            <p className="text-red-800 font-medium">Failed to load tutorials</p>
-            <p className="text-red-600 text-sm mt-1">{error}</p>
+        <div className="max-w-2xl mx-auto w-full">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-sm">
+            <p className="text-gray-900 font-semibold">Failed to load tutorials</p>
+            <p className="text-gray-600 text-sm mt-1">{error}</p>
+
             <button
-              onClick={() => window.location.reload()}
-              className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700"
+              onClick={handleRetry}
+              className="mt-4 inline-flex items-center justify-center bg-[#AF69EE] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition hover:brightness-110 active:scale-95"
             >
               Retry
             </button>
@@ -71,28 +69,31 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
         </div>
       )}
 
-      {/* Success state - Tutorial grid */}
+      {/* Success state */}
       {!loading && !error && (
         <div className="max-w-5xl mx-auto grid gap-8 sm:grid-cols-2">
           {tutorials.length === 0 ? (
-            <div className="col-span-2 text-center py-12">
-              <p className="text-gray-500 text-lg">No tutorials available yet</p>
+            <div className="sm:col-span-2">
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
+                <p className="text-gray-900 font-semibold">No tutorials available yet</p>
+                <p className="text-gray-600 text-sm mt-1">Check back soon.</p>
+              </div>
             </div>
           ) : (
-            tutorials.map((tutorial) => (
+            tutorials.map((tutorial, idx) => (
               <div
                 key={tutorial.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden transition hover:shadow-xl hover:-translate-y-1"
+                className="group bg-white rounded-2xl shadow-lg overflow-hidden transform-gpu transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-[fadeUp_.35s_ease-out_both]"
+                style={{ animationDelay: `${idx * 60}ms` }}
               >
-                <div className="h-56 w-full overflow-hidden bg-gray-200">
+                <div className="h-70 w-full overflow-hidden bg-gray-200">
                   {tutorial.photoUrl ? (
                     <img
                       src={tutorial.photoUrl}
                       alt={tutorial.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       onError={(e) => {
-                        // Fallback if image fails to load
-                        e.currentTarget.src = '/placeholder-tutorial.jpg';
+                        e.currentTarget.src = "/placeholder-tutorial.jpg";
                       }}
                     />
                   ) : (
@@ -102,21 +103,20 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
                   )}
                 </div>
 
-                <div className="p-5 flex items-center justify-between border-t border-gray-200">
-                  <div className="flex-1 pr-4">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {tutorial.title}
-                    </h3>
-                    {tutorial.description && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                        {tutorial.description}
-                      </p>
-                    )}
-                  </div>
+                <div className="p-5 border-t border-gray-200 flex flex-col gap-3">
+                  <h3 className="text-xl font-semibold text-gray-700 leading-tight">
+                    {tutorial.title}
+                  </h3>
+
+                  {tutorial.description && (
+                    <p className="text-sm text-gray-500 leading-snug line-clamp-3">
+                      {tutorial.description}
+                    </p>
+                  )}
 
                   <button
                     onClick={() => navigate(`/steps/${tutorial.id}`)}
-                    className="bg-[#AF69EE] text-white px-4 py-2 rounded-lg text-sm font-medium transition hover:brightness-110 active:scale-95 whitespace-nowrap"
+                    className="w-full bg-[#AF69EE] text-white px-4 py-2 rounded-xl text-sm font-medium transition active:scale-95"
                   >
                     Start Tutorial
                   </button>
@@ -126,6 +126,16 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
           )}
         </div>
       )}
+
+      {/* Local keyframes for card entrance */}
+      <style>
+        {`
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}
+      </style>
     </div>
   );
 }
