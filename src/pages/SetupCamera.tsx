@@ -1,21 +1,18 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Webcam from "react-webcam";
 import PageHeader from "../components/PageHeader";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
 const SETUP_DONE_KEY = "puzzled_camera_setup_done";
 
-interface SetupCameraProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function SetupCameraPage({ language, setLanguage }: SetupCameraProps) {
+export default function SetupCameraPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { tutorialId?: string } | null;
   const tutorialId = state?.tutorialId ?? "treehacks";
+  const { t } = useTranslation(['camera', 'common']);
 
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [error, setError] = useState("");
@@ -41,17 +38,17 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
 
   return (
     <div className="h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-6 overflow-hidden flex flex-col">
-      <PageHeader backTo="/tutorial" language={language} setLanguage={setLanguage} />
+      <PageHeader backTo="/tutorial" />
 
       <div className="mt-6 max-w-3xl w-full mx-auto flex-1 min-h-0">
         {/* Main card wrapper */}
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 h-full flex flex-col min-h-0">
           {/* Top text */}
           <div className="shrink-0">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Camera setup</p>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900">Setup your camera</h1>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('camera:setup.title')}</p>
+            <h1 className="mt-1 text-2xl font-bold text-gray-900">{t('camera:setup.heading')}</h1>
             <p className="mt-2 text-sm text-gray-600">
-              Place your camera above the workspace so we can verify each step clearly.
+              {t('camera:setup.description')}
             </p>
           </div>
 
@@ -68,7 +65,7 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
               }}
               onUserMediaError={() => {
                 setPermissionGranted(false);
-                setError("Camera access is required. Please allow camera permissions.");
+                setError(t('camera:setup.errors.permissionDenied'));
               }}
               className="w-full h-full object-cover"
             />
@@ -77,11 +74,11 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
           {/* Tips + error */}
           <div className="mt-4 grid gap-3 shrink-0">
             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-              <p className="text-sm font-semibold text-gray-800 mb-2">Tips</p>
+              <p className="text-sm font-semibold text-gray-800 mb-2">{t('camera:setup.tips.title')}</p>
               <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                <li>Top-down angle</li>
-                <li>Keep the camera stable</li>
-                <li>Use bright, consistent lighting</li>
+                <li>{t('camera:setup.tips.topDown')}</li>
+                <li>{t('camera:setup.tips.stable')}</li>
+                <li>{t('camera:setup.tips.lighting')}</li>
               </ul>
             </div>
 
@@ -89,7 +86,7 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
               <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
                 <p className="text-red-700 text-sm font-medium">{error}</p>
                 <p className="text-gray-600 text-sm mt-1">
-                  If you already denied permission, enable it in your browser/site settings and refresh.
+                  {t('camera:setup.errors.permissionHelp')}
                 </p>
               </div>
             )}
@@ -109,7 +106,7 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
                     : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
                 }`}
             >
-              Start
+              {t('common:buttons.start')}
               <ArrowRightIcon className="w-5 h-5 stroke-2" />
             </button>
           </div>

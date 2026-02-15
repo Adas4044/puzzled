@@ -1,0 +1,23 @@
+{
+  "setup": {
+    "title": "Configuración de cámara",
+    "heading": "Configura tu cámara",
+    "description": "Coloca tu cámara sobre el área de trabajo para que podamos verificar cada paso claramente.",
+    "tips": {
+      "title": "Consejos",
+      "topDown": "Ángulo superior",
+      "stable": "Mantén la cámara estable",
+      "lighting": "Usa iluminación brillante y constante"
+    },
+    "errors": {
+      "permissionDenied": "Se requiere acceso a la cámara. Por favor, permite los permisos de cámara.",
+      "permissionHelp": "Si ya negaste el permiso, actívalo en la configuración de tu navegador/sitio y actualiza."
+    }
+  },
+  "capture": {
+    "takePicture": "Tomar foto",
+    "capture": "Capturar",
+    "errorCapture": "No se pudo capturar la imagen. Asegúrate de que la cámara esté funcionando."
+  },
+  "stepLabel": "Paso {{stepId}}"
+}

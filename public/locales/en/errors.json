@@ -1,0 +1,12 @@
+{
+  "network": "Network error. Check your connection and try again.",
+  "serverError": "Server error. Please contact support.",
+  "serviceUnavailable": "Service temporarily unavailable. Please try again.",
+  "apiError": "Failed to create meeting. Please try again.",
+  "verifyFailed": "Verify failed. Check API URL / HTTPS / CORS.",
+  "noPhoto": "No photo found. Go back and take a picture.",
+  "unexpected": "An unexpected error occurred",
+  "creatingMeeting": "Creating Meeting...",
+  "getLiveHelp": "Get Live Help",
+  "requestHelp": "Request help"
+}

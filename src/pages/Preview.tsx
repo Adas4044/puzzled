@@ -17,12 +17,7 @@ const DETECTOR_TYPE: "claude" | "siamese" = "claude";
 
 type PreviewState = { stepId: number; imageSrc: string; tutorialId?: string };
 
-interface PreviewPageProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function PreviewPage({ language, setLanguage }: PreviewPageProps) {
+export default function PreviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as PreviewState | null;
@@ -123,7 +118,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/camera-step-completion" language={language} setLanguage={setLanguage} />
+      <PageHeader backTo="/camera-step-completion" />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">

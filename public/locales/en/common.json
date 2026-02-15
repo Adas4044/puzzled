@@ -1,0 +1,16 @@
+{
+  "buttons": {
+    "back": "Back",
+    "start": "Start",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "save": "Save",
+    "verify": "Verify",
+    "retake": "Retake"
+  },
+  "loading": "Loading...",
+  "verifying": "Verifying...",
+  "savedSuccessfully": "✅ Saved successfully!",
+  "previewStep": "Preview Step {{stepId}}",
+  "noImage": "No image"
+}

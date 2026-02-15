@@ -1,0 +1,9 @@
+{
+  "heading": "Aide en direct",
+  "description": "Obtenez l'aide d'un technicien en temps réel pour continuer en toute confiance.",
+  "technicianStatus": "Technicien disponible",
+  "responseTime": "Répond généralement en moins de 2 minutes",
+  "securityTitle": "Rapide et sécurisé",
+  "zoomDescription": "Vous rejoindrez un appel Zoom dans un nouvel onglet. Votre progression ici restera sauvegardée.",
+  "popupBlockerHint": "Si vous ne voyez pas de réponse, vérifiez les bloqueurs de fenêtres contextuelles pour Zoom."
+}

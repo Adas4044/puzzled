@@ -1,0 +1,23 @@
+{
+  "setup": {
+    "title": "Camera setup",
+    "heading": "Setup your camera",
+    "description": "Place your camera above the workspace so we can verify each step clearly.",
+    "tips": {
+      "title": "Tips",
+      "topDown": "Top-down angle",
+      "stable": "Keep the camera stable",
+      "lighting": "Use bright, consistent lighting"
+    },
+    "errors": {
+      "permissionDenied": "Camera access is required. Please allow camera permissions.",
+      "permissionHelp": "If you already denied permission, enable it in your browser/site settings and refresh."
+    }
+  },
+  "capture": {
+    "takePicture": "Take Picture",
+    "capture": "Capture",
+    "errorCapture": "Could not capture image. Make sure the camera is running."
+  },
+  "stepLabel": "Step {{stepId}}"
+}

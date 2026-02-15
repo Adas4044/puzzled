@@ -1,0 +1,9 @@
+{
+  "title": "Sélectionner un tutoriel",
+  "startTutorial": "Démarrer le tutoriel",
+  "noTutorials": "Aucun tutoriel disponible pour le moment",
+  "errors": {
+    "failedToLoad": "Échec du chargement des tutoriels",
+    "tryAgain": "Veuillez réessayer"
+  }
+}

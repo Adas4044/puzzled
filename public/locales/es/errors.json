@@ -1,0 +1,12 @@
+{
+  "network": "Error de red. Verifica tu conexión e inténtalo de nuevo.",
+  "serverError": "Error del servidor. Por favor, contacta con soporte.",
+  "serviceUnavailable": "Servicio temporalmente no disponible. Por favor, inténtalo de nuevo.",
+  "apiError": "Error al crear la reunión. Por favor, inténtalo de nuevo.",
+  "verifyFailed": "Verificación fallida. Verifica la URL de la API / HTTPS / CORS.",
+  "noPhoto": "No se encontró ninguna foto. Vuelve atrás y toma una foto.",
+  "unexpected": "Ocurrió un error inesperado",
+  "creatingMeeting": "Creando reunión...",
+  "getLiveHelp": "Obtener ayuda en vivo",
+  "requestHelp": "Solicitar ayuda"
+}
