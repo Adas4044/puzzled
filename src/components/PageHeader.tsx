@@ -1,6 +1,7 @@
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "./LanguageSelector";
+import Logo from "../assets/llama-puzzle.png"
 
 type Props = {
   onBack?: () => void;
@@ -22,7 +23,11 @@ export default function PageHeader({
         <ArrowLeftIcon className="w-5 h-5 stroke-2" />
         <span className="text-sm font-medium">{t('buttons.back')}</span>
       </button>
-
+      <img
+        src={Logo}
+        alt="Llama Logo"
+        className="w-15 h-15 object-contain"
+      />
       <div className="w-30">
         <LanguageSelector
           align={align}
