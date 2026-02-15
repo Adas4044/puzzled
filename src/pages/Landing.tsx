@@ -76,14 +76,9 @@ type Phase = "puzzle" | "solved";
 export default function Landing() {
   const navigate = useNavigate();
 
-  // On mobile, skip the puzzle and go straight to the tutorial selection
-  useEffect(() => {
-    if (window.innerWidth < 768) {
-      navigate("/tutorial", { replace: true });
-    }
-  }, [navigate]);
-
-  const [phase, setPhase] = useState<Phase>("puzzle");
+  const [phase, setPhase] = useState<Phase>(
+    window.innerWidth < 768 ? "solved" : "puzzle"
+  );
   const [dragging, setDragging] = useState(false);
   const [piecePos, setPiecePos] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
