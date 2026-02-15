@@ -23,7 +23,7 @@ export default function Language({language, setLanguage}: LanguageProps){
         <div className="flex justify-end">
           <button className="inline-flex items-center gap-2 bg-[#AF69EE] text-white px-5 py-3 rounded-xl transition active:scale-95"
           onClick={() => navigate("/tutorial")}>
-            <ArrowRightIcon className="w-4 h-4" />
+            <ArrowRightIcon className="w-5 h-5 stroke-2" />
           </button>
         </div>
       </div>

@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @import "flag-icons/css/flag-icons.min.css";
+
+body {
+  background-color: #F8F5FF;
+}
