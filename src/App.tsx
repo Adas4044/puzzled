@@ -9,6 +9,7 @@ import Tutorial from "./pages/Tutorial";
 import Verified from "./pages/Verified";
 import Zoom from "./pages/Zoom";
 import Help from "./pages/Help";
+import AllDone from "./pages/AllDone";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/preview" element={<Preview />} />
         <Route path="/zoom" element={<Zoom />} />
         <Route path="/analyzing" element={<Analyzing />} />
+        <Route path="/alldone" element={<AllDone/>} />
         <Route path="/verified" element={<Verified activeStep={1} totalSteps={5} />} />
         <Route path="/help" element={<Help />} />
       </Routes>
