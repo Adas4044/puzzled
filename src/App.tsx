@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<Language language={language} setLanguage={setLanguage} />} />
         <Route path="/tutorial" element={<Tutorial language={language} setLanguage={setLanguage} />} />
         <Route path="/zoom" element={<Zoom />} />
-        <Route path="/instruction" element={<Instruction />} />
+        <Route path="/instruction" element={<Instruction language={language} setLanguage={setLanguage}/>} />
       </Routes>
     </BrowserRouter>
   );
