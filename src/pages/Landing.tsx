@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import llamaPuzzleImg from "../assets/llama-puzzle.png";
+import Logo from "../assets/llama-puzzle.png"
 
 // Dark mode: purple-tinted dark (accent #AF69EE)
 const THEME = {
@@ -306,6 +307,7 @@ export default function Landing() {
         className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-700"
         style={{ opacity: phase === "solved" ? 1 : 0, pointerEvents: phase === "solved" ? "auto" : "none" }}
       >
+        <img src={Logo} alt="" className="w-30 h-30 object-contain"/>
         <div className="text-center select-none">
           <div
             className="font-black leading-none tracking-tighter landing-gradient-text"
