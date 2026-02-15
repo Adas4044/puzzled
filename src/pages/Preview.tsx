@@ -1,33 +1,53 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import PageHeader from "../components/PageHeader";
+import InstructionStepper from "../components/InstructionStepper";
+import PlaceholderImg from "../assets/instruction-default.png"; // <-- replace with your placeholder
 
 const API_URL = import.meta.env.VITE_API_URL;
 const RUNPOD_URL = import.meta.env.VITE_RUNPOD_URL;
 const RUNPOD_API_KEY = import.meta.env.VITE_RUNPOD_API_KEY;
 const USE_RUNPOD = import.meta.env.VITE_USE_RUNPOD === "true";
 
-// Detector type: "claude" or "siamese"
-// - claude: Uses Claude Vision API (better accuracy, handles different angles)
-// - siamese: Uses local Siamese network (faster, no API cost, needs consistent angles)
 const DETECTOR_TYPE: "claude" | "siamese" = "claude";
 
-export default function PreviewPage() {
+type PreviewState = { stepId: number; imageSrc: string };
+
+interface PreviewPageProps {
+  language: string;
+  setLanguage: (lang: string) => void;
+}
+
+export default function PreviewPage({ language, setLanguage }: PreviewPageProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const state = location.state as PreviewState | null;
 
-  const state = location.state as { stepId: number; imageSrc: string } | null;
+  const totalSteps = 5;
 
-  const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState("");
   const [match, setMatch] = useState<boolean | null>(null);
   const [error, setError] = useState("");
 
+  const title = useMemo(() => "Check Your Photo", []);
+  const description = useMemo(
+    () => "Confirm the photo looks clear, then tap Verify to check your step.",
+    []
+  );
+
   if (!state) {
     return (
-      <div style={{ maxWidth: 420, margin: "24px auto", padding: 16 }}>
-        <p>No photo found. Go back and take a picture.</p>
-        <button onClick={() => navigate("/")}>Back</button>
+      <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
+        <div className="max-w-[420px] mx-auto">
+          <p className="text-gray-700">No photo found. Go back and take a picture.</p>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="mt-4 w-full py-3 rounded-xl bg-black text-white font-semibold"
+          >
+            Back
+          </button>
+        </div>
       </div>
     );
   }
@@ -37,6 +57,7 @@ export default function PreviewPage() {
   const verify = async () => {
     setError("");
     setLoading(true);
+    setMatch(null);
 
     try {
       let data: any;
@@ -77,13 +98,7 @@ export default function PreviewPage() {
         data = await response.json();
       }
 
-      setFeedback(data.feedback ?? "");
       setMatch(!!data.match);
-
-      if ("speechSynthesis" in window && data.feedback) {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.feedback));
-      }
     } catch {
       setError("Verify failed. Check API URL / HTTPS / CORS.");
     } finally {
@@ -91,110 +106,87 @@ export default function PreviewPage() {
     }
   };
 
-  const handleSave = () => {
-    setShowSuccess(true);
-  };
+  const handleRetake = () => navigate(-1);
 
   return (
-    <div style={{ maxWidth: 420, margin: "24px auto", padding: 16, position: "relative" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>Preview Step {stepId}</h2>
-        {match !== null && (
-          <div
-            style={{
-              padding: "8px 16px",
-              borderRadius: 8,
-              backgroundColor: match ? "#28a745" : "#dc3545",
-              color: "white",
-              fontWeight: "bold",
-              fontSize: 18,
-            }}
-          >
-            {match ? "TRUE" : "FALSE"}
+    <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
+      <PageHeader backTo="/camera-step-completion" language={language} setLanguage={setLanguage} />
+
+      <div className="mt-8 max-w-3xl mx-auto">
+        <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
+          <InstructionStepper steps={totalSteps} activeStep={stepId - 1} />
+
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">
+                Step {stepId} of {totalSteps}
+              </p>
+              <h2 className="mt-1 text-2xl font-bold text-gray-900">{title}</h2>
+              <p className="mt-2 text-sm text-gray-600">{description}</p>
+            </div>
+
+            {/* Match badge (optional) */}
+            {match !== null && (
+              <div
+                className={`shrink-0 px-3 py-2 rounded-lg text-white font-bold text-sm ${
+                  match ? "bg-green-600" : "bg-red-600"
+                }`}
+              >
+                {match ? "TRUE" : "FALSE"}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {showSuccess && (
-        <div
-          style={{
-            position: "absolute",
-            top: 12,
-            left: 16,
-            right: 16,
-            padding: 12,
-            borderRadius: 10,
-            backgroundColor: "#e9fbe9",
-            border: "1px solid #b7f0b7",
-            color: "#145214",
-            fontWeight: 600,
-            textAlign: "center",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-          }}
-        >
-          ✅ Saved successfully!
+          {/* Two tiles side by side */}
+          <div className="flex gap-3 w-full">
+            {/* Captured image */}
+            <div className="flex-1 min-w-0 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-100 aspect-square">
+              <img src={imageSrc} alt="Captured" className="w-full h-full object-cover" />
+            </div>
+
+            {/* Static placeholder (always) */}
+            <div className="flex-1 min-w-0 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-50 aspect-square">
+              <img
+                src={PlaceholderImg}
+                alt="Placeholder"
+                className="w-full h-full object-cover opacity-80"
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          {/* Bottom actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={handleRetake}
+              className="flex-1 py-3 px-4 rounded-xl
+                         bg-white border-2 border-gray-300 text-gray-800 font-medium text-sm
+                         shadow-md transition-transform transition-shadow duration-200
+                         hover:shadow-lg hover:-translate-y-0.5
+                         active:translate-y-0 active:scale-95"
+            >
+              Retake photo
+            </button>
+
+            <button
+              type="button"
+              onClick={verify}
+              disabled={loading}
+              className={`flex-1 py-3 px-4 rounded-xl
+                         font-medium text-sm shadow-lg transition-transform transition-shadow duration-200
+                         active:scale-95
+                         ${
+                           loading
+                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                             : "bg-[#AF69EE] text-white hover:shadow-xl hover:-translate-y-0.5 hover:brightness-110"
+                         }`}
+            >
+              {loading ? "Verifying…" : "Verify"}
+            </button>
+          </div>
         </div>
-      )}
-
-      <div style={{ marginTop: 12 }}>
-        <img src={imageSrc} alt="Preview" style={{ width: "100%", borderRadius: 12 }} />
-      </div>
-
-
-      {feedback && (
-        <div style={{ marginTop: 12, padding: 12, borderRadius: 8, backgroundColor: "#f3f3f3" }}>
-          {feedback}
-        </div>
-      )}
-
-      {error && <p style={{ color: "red", marginTop: 10 }}>{error}</p>}
-      {loading && <p style={{ marginTop: 10 }}>Verifying...</p>}
-
-      <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderRadius: 8,
-            border: "1px solid #ddd",
-            backgroundColor: "#000",
-            color: "white",
-          }}
-        >
-          Retake
-        </button>
-
-        <button
-          onClick={verify}
-          disabled={loading}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: loading ? "#6c757d" : "#17a2b8",
-            color: "white",
-            fontWeight: 600,
-          }}
-        >
-          Verify
-        </button>
-
-        <button
-          onClick={handleSave}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "#007bff",
-            color: "white",
-            fontWeight: 600,
-          }}
-        >
-          Save
-        </button>
       </div>
     </div>
   );

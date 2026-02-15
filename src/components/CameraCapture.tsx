@@ -1,108 +1,85 @@
-import { useMemo, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Webcam from "react-webcam";
+
+export type CameraCaptureHandle = {
+  capture: () => void;
+  isReady: () => boolean;
+};
 
 type Props = {
   stepId: number;
   onCaptured: (imageSrc: string) => void;
+  onReadyChange?: (ready: boolean) => void; 
 };
 
-export default function CameraCapture({ onCaptured }: Props) {
-  const webcamRef = useRef<Webcam>(null);
+const CameraCapture = forwardRef<CameraCaptureHandle, Props>(
+  ({ onCaptured, onReadyChange }, ref) => {
+    const webcamRef = useRef<Webcam>(null);
 
-  const [cameraOn, setCameraOn] = useState(false);
-  const [error, setError] = useState("");
+    const [error, setError] = useState("");
+    const [ready, setReady] = useState(false);
 
-  const videoConstraints = useMemo(
-    () => ({
-      facingMode: { ideal: "environment" }, // back camera
-      width: { ideal: 1280 },
-      height: { ideal: 720 },
-    }),
-    []
-  );
+    const videoConstraints = useMemo(
+      () => ({
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+      }),
+      []
+    );
 
-  const captureOnly = () => {
-    setError("");
-    if (!webcamRef.current) return;
+    const captureOnly = () => {
+      setError("");
+      if (!webcamRef.current) return;
 
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (!imageSrc) {
-      setError("Could not capture image. Make sure the camera is running.");
-      return;
-    }
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (!imageSrc) {
+        setError("Could not capture image. Make sure the camera is running.");
+        return;
+      }
 
-    // pass captured image up to CameraPage > navigate to Preview
-    onCaptured(imageSrc);
-  };
+      onCaptured(imageSrc);
+    };
 
-  return (
-    <div style={{ textAlign: "center" }}>
-      {!cameraOn ? (
-        <button
-          onClick={() => setCameraOn(true)}
-          style={{
-            marginTop: 12,
-            padding: "12px 16px",
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "#007bff",
-            color: "white",
-            fontSize: 16,
-            width: "100%",
-          }}
-        >
-          Take Picture
-        </button>
-      ) : (
-        <>
+    useImperativeHandle(ref, () => ({
+      capture: captureOnly,
+      isReady: () => ready,
+    }));
+
+    return (
+      <div className="w-full">
+        <div className="relative w-full rounded-xl border border-gray-300 overflow-hidden bg-gray-100">
           <Webcam
             ref={webcamRef}
             audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
             playsInline
-            style={{ width: "100%", borderRadius: 12 }}
-          />
-
-          <button
-            onClick={captureOnly}
-            style={{
-              marginTop: 12,
-              padding: "12px 16px",
-              borderRadius: 8,
-              border: "none",
-              backgroundColor: "#007bff",
-              color: "white",
-              fontSize: 16,
-              width: "100%",
-              cursor: "pointer",
-            }}
-          >
-            Capture
-          </button>
-
-          <button
-            onClick={() => {
-              setCameraOn(false);
+            onUserMedia={() => {
+              setReady(true);
+              onReadyChange?.(true);
               setError("");
             }}
-            style={{
-              marginTop: 10,
-              padding: "10px 16px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              backgroundColor: "black",
-              fontSize: 14,
-              width: "100%",
-              color: "white",
+            onUserMediaError={() => {
+              setReady(false);
+              onReadyChange?.(false);
+              setError("Camera access denied. Please allow permissions and try again.");
             }}
-          >
-            Cancel
-          </button>
-        </>
-      )}
+            className="w-full aspect-[4/3] object-cover"
+          />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </div>
-  );
-}
+          {!ready && !error && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white font-semibold">
+              Starting camera...
+            </div>
+          )}
+        </div>
+
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      </div>
+    );
+  }
+);
+
+CameraCapture.displayName = "CameraCapture";
+export default CameraCapture;
