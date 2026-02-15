@@ -145,7 +145,7 @@ export default function PreviewPage() {
   const handleRetake = () => navigate(-1);
 
   const handleTryAgain = () => {
-    navigate("/camera-step-completion", { state: { stepId: stepId, routeTutorialId } });
+    navigate(`/camera-step-completion/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
   };
 
   const handleContinueToNextStep = () => {
