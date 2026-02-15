@@ -2,24 +2,49 @@ import InstructionStepper from "../components/InstructionStepper";
 import PageHeader from "../components/PageHeader";
 import InstructionDefaultImg from "../assets/instruction-default.png";
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { fetchTutorialWithSteps } from "../services/tutorialService";
+import type { Tutorial } from "../types/database";
 
 export default function Instruction() {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { tutorialId?: string; stepNumber?: number } | null;
-  const tutorialId = state?.tutorialId ?? "treehacks";
+  const { tutorialId: paramTutorialId } = useParams<{ tutorialId: string }>();
+  const state = location.state as { stepNumber?: number } | null;
+  const tutorialId = paramTutorialId ?? "treehacks";
   const { t } = useTranslation(['instruction', 'common']);
 
-  const totalSteps = 5;
+  const [tutorial, setTutorial] = useState<Tutorial | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalSteps, setTotalSteps] = useState(5);
   const [stepNumber, setStepNumber] = useState(() => state?.stepNumber ?? 1);
 
   useEffect(() => {
     const stepFromState = (location.state as { stepNumber?: number } | null)?.stepNumber;
     if (typeof stepFromState === "number") setStepNumber(stepFromState);
   }, [location.state]);
+
+  useEffect(() => {
+    async function loadTutorial() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchTutorialWithSteps(tutorialId);
+        setTutorial(data);
+        setTotalSteps(data.steps.length);
+      } catch (err) {
+        console.error("Failed to load tutorial:", err);
+        setError("Failed to load tutorial instructions");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadTutorial();
+  }, [tutorialId]);
 
   const handleStepComplete = () => {
     // send the step id and tutorial id to the camera completion page
@@ -45,33 +70,50 @@ export default function Instruction() {
 
     const handleBack = () => {
     if (stepNumber <= 1) {
-      navigate("/camerasetup");
+      navigate("/camerasetup", { state: { tutorialId } });
       return;
     }
     setStepNumber((prev) => Math.max(prev - 1, 1));
   };
+
+  // Get current step's data from fetched tutorial
+  const currentStep = tutorial?.steps[stepNumber - 1];
+  const instructionImage = currentStep?.instructionUrl || InstructionDefaultImg;
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
       <PageHeader onBack={handleBack} />
 
       <div className="mt-8 max-w-3xl mx-auto">
-        <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
-          <InstructionStepper steps={totalSteps} activeStep={stepNumber - 1} />
+        {loading && (
+          <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+            <div className="flex justify-center items-center space-x-2">
+              <div className="w-6 h-6 border-4 border-[#AF69EE] border-t-transparent rounded-full animate-spin" />
+              <span className="text-gray-600">Loading instructions...</span>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+            <p className="text-red-500 font-medium">{error}</p>
+            <button
+              onClick={() => navigate("/tutorial")}
+              className="mt-4 px-6 py-2 bg-[#AF69EE] text-white rounded-lg"
+            >
+              Back to Tutorials
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && tutorial && (
+          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
+            <InstructionStepper steps={totalSteps} activeStep={stepNumber - 1} />
 
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">
               {t('instruction:stepLabel', { number: stepNumber, total: totalSteps })}
             </p>
-
-            <h2 className="mt-1 text-2xl font-bold text-gray-900">
-              Attach the drill bit to the handpiece
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Align the bit, insert fully, and confirm it locks in place before continuing.
-            </p>
-
             <p className="mt-2 text-sm text-gray-600">
               <Trans
                 i18nKey="instruction:completionHint"
@@ -82,9 +124,13 @@ export default function Instruction() {
 
           <div className="mt-4">
             <img
-              src={InstructionDefaultImg}
-              alt={`Step ${stepNumber}`}
+              src={instructionImage}
+              alt={`Step ${stepNumber} instruction`}
               className="w-full rounded-xl border border-gray-300"
+              onError={(e) => {
+                // Fallback to default image if URL fails to load
+                e.currentTarget.src = InstructionDefaultImg;
+              }}
             />
           </div>
 
@@ -124,7 +170,8 @@ export default function Instruction() {
         Already completed? Skip to next step
       </button>
 </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
