@@ -187,7 +187,7 @@ class SiameseStepDetector:
             confidence = "low"
 
         if is_match:
-            explanation = f"Matches step {target_step} (similarity: {max_similarity:.1%})"
+            explanation = "Success! Keep going with the build process."
         else:
             explanation = f"Does not match step {target_step} (similarity: {max_similarity:.1%}, need {self.similarity_threshold:.0%})"
 

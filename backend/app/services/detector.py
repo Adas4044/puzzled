@@ -250,6 +250,10 @@ EXPLANATION: [Brief explanation of your assessment]"""
                 elif line.startswith("EXPLANATION:"):
                     explanation = line.split(":", 1)[1].strip()
 
+            # Use simple positive message for matches
+            if is_match:
+                explanation = "Success! Keep going with the build process."
+
             return VerificationResult(
                 step=target_step,
                 is_match=is_match,
