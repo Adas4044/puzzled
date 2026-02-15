@@ -7,7 +7,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
-import PageHeader from "../components/PageHeader";
 
 const SETUP_DONE_KEY = "puzzled_camera_setup_done";
 
