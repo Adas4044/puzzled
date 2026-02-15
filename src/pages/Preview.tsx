@@ -63,9 +63,9 @@ export default function PreviewPage() {
     navigate(`/camera-step-completion/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
   }
 
-  const handleLiveHelp = () => {
-  navigate("/help");
-};
+ const handleLiveHelp = () => {
+    navigate(`/help/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
+  };
 
 
   if (!state) {
