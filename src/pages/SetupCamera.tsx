@@ -35,7 +35,7 @@ export default function SetupCameraPage() {
   };
 
   const handleBack = () => {
-    navigate("/tutorial");
+    navigate(`/tutorial`);
   }
 
   return (

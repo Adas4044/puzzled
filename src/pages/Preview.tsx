@@ -1,8 +1,10 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { fetchTutorialWithSteps } from "../services/tutorialService";
 import PageHeader from "../components/PageHeader";
 import InstructionStepper from "../components/InstructionStepper";
 import PlaceholderImg from "../assets/instruction-default.png";
+import type { Tutorial } from "../types/database";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const RUNPOD_URL = import.meta.env.VITE_RUNPOD_URL;
@@ -15,28 +17,50 @@ const USE_RUNPOD = import.meta.env.VITE_USE_RUNPOD === "true";
 
 const DETECTOR_TYPE: "claude" | "siamese" = "claude";
 
-type PreviewState = { stepId: number; imageSrc: string; tutorialId?: string };
+type PreviewState = { stepId: number; imageSrc: string; totalSteps?: number};
 
 export default function PreviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as PreviewState | null;
+  const { tutorialId: paramTutorialId } = useParams<{ tutorialId: string }>();
+  const routeTutorialId = paramTutorialId ?? "treehacks";
 
-  const totalSteps = 5;
+  const totalSteps = state?.totalSteps ?? 5;
+
 
   const [loading, setLoading] = useState(false);
   const [match, setMatch] = useState<boolean | null>(null);
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
-
+  const [tutorial, setTutorial] = useState<Tutorial | null>(null);
+  
   const title = useMemo(() => "Check Your Photo", []);
   const description = useMemo(
     () => "Confirm the photo looks clear, then tap Verify to check your step.",
     []
   );
 
+    useEffect(() => {
+      async function loadTutorial() {
+        try {
+          setLoading(true);
+          setError("");
+          const data = await fetchTutorialWithSteps(routeTutorialId);
+          setTutorial(data);
+        } catch (err) {
+          console.error("Failed to load tutorial:", err);
+          setError("Failed to load tutorial instructions");
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      loadTutorial();
+    }, [routeTutorialId]);
+
   const handleBack = () => {
-    navigate("/camera-step-completion");
+    navigate(`/camera-step-completion/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
   }
 
   if (!state) {
@@ -56,7 +80,7 @@ export default function PreviewPage() {
     );
   }
 
-  const { stepId, imageSrc, tutorialId = "treehacks" } = state;
+  const { stepId, imageSrc} = state;
 
   const verify = async () => {
     setError("");
@@ -77,7 +101,7 @@ export default function PreviewPage() {
             Authorization: `Bearer ${RUNPOD_API_KEY}`,
           },
           body: JSON.stringify({
-            input: { image_base64: base64Data, step_id: stepId, tutorial_id: tutorialId },
+            input: { image_base64: base64Data, step_id: stepId, tutorial_id: routeTutorialId },
           }),
         });
 
@@ -93,7 +117,7 @@ export default function PreviewPage() {
         form.append("image", file);
         form.append("stepId", String(stepId));
         form.append("detector_type", DETECTOR_TYPE);
-        form.append("tutorial_id", tutorialId);
+        form.append("tutorial_id", routeTutorialId);
 
         const response = await fetch(`${API_URL}/verify/verify-step`, {
           method: "POST",
@@ -121,18 +145,18 @@ export default function PreviewPage() {
   const handleRetake = () => navigate(-1);
 
   const handleTryAgain = () => {
-    navigate("/instruction", { state: { stepNumber: stepId, tutorialId } });
+    navigate("/camera-step-completion", { state: { stepId: stepId, routeTutorialId } });
   };
 
   const handleContinueToNextStep = () => {
     navigate("/verified", {
-      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, tutorialId },
+      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, routeTutorialId },
     });
   };
 
   const handleOverrideAndContinue = () => {
     navigate("/verified", {
-      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, tutorialId },
+      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, routeTutorialId },
     });
   };
 
@@ -175,7 +199,7 @@ export default function PreviewPage() {
 
             <div className="flex-1 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-50 aspect-square">
               <img
-                src={PlaceholderImg}
+                src={tutorial?.steps[stepId - 1]?.stepUrl || PlaceholderImg}
                 alt="Placeholder"
                 className="w-full h-full object-cover opacity-80"
               />

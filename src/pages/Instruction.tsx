@@ -48,7 +48,7 @@ export default function Instruction() {
 
   const handleStepComplete = () => {
     // send the step id and tutorial id to the camera completion page
-    navigate("/camera-step-completion", { state: { stepId: stepNumber, tutorialId } });
+    navigate(`/camera-step-completion/${tutorialId}`, { state: { stepId: stepNumber, totalSteps} });
   };
 
   const goToAllDone = () => {
@@ -70,7 +70,7 @@ export default function Instruction() {
 
     const handleBack = () => {
     if (stepNumber <= 1) {
-      navigate("/camerasetup", { state: { tutorialId } });
+      navigate(`/camerasetup/${tutorialId}`);
       return;
     }
     setStepNumber((prev) => Math.max(prev - 1, 1));

@@ -22,12 +22,12 @@ function App() {
         <Route path="/tutorial" element={<Tutorial />} />
         <Route path="/camerasetup/:tutorialId" element={<SetupCamera />} />
         <Route path="/instruction/:tutorialId" element={<Instruction />} />
-        <Route path="/camera-step-completion" element={<CameraStepCompletion />} />
-        <Route path="/preview" element={<Preview />} />
+        <Route path="/camera-step-completion/:tutorialId" element={<CameraStepCompletion />} />
+        <Route path="/preview/:tutorialId" element={<Preview />} />
         <Route path="/zoom" element={<Zoom />} />
         <Route path="/analyzing" element={<Analyzing />} />
         <Route path="/alldone" element={<AllDone/>} />
-        <Route path="/verified" element={<Verified activeStep={1} totalSteps={5} />} />
+        <Route path="/verified/:tutorialId" element={<Verified />} />
         <Route path="/help" element={<Help />} />
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import InstructionStepper from "../components/InstructionStepper";
@@ -9,12 +9,13 @@ import { CameraIcon } from "@heroicons/react/24/outline";
 export default function CameraStepCompletionPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { tutorialId: paramTutorialId } = useParams<{ tutorialId: string }>();
+  const tutorialId = paramTutorialId ?? "treehacks";
 
-  const state = location.state as { stepId?: number; tutorialId?: string } | null;
+  const state = location.state as { stepId?: number; totalSteps?: number} | null;
   const stepId = state?.stepId ?? 1;
-  const tutorialId = state?.tutorialId ?? "treehacks";
 
-  const totalSteps = 5;
+  const totalSteps = state?.totalSteps ?? 5;
 
   const title = useMemo(() => "Take a photo", []);
   const description = useMemo(
@@ -26,7 +27,7 @@ export default function CameraStepCompletionPage() {
   const [cameraReady, setCameraReady] = useState(false);
 
   const handleCaptured = (imageSrc: string) => {
-    navigate("/preview", { state: { stepId, imageSrc, tutorialId } });
+    navigate(`/preview/${tutorialId}`, { state: { stepId, imageSrc, totalSteps } });
   };
 
   const handleShutter = () => {
@@ -34,7 +35,7 @@ export default function CameraStepCompletionPage() {
   };
 
   const handleBack = () => {
-    navigate("/instruction");
+    navigate(`/instruction/${tutorialId}`, { state: { stepNumber: stepId } });
   }
 
   return (
