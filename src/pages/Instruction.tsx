@@ -1,7 +1,7 @@
 import InstructionStepper from "../components/InstructionStepper";
 import PageHeader from "../components/PageHeader";
 import InstructionDefaultImg from "../assets/instruction-default.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
@@ -9,12 +9,17 @@ import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline"
 export default function Instruction() {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { tutorialId?: string } | null;
+  const state = location.state as { tutorialId?: string; stepNumber?: number } | null;
   const tutorialId = state?.tutorialId ?? "treehacks";
   const { t } = useTranslation(['instruction', 'common']);
 
   const totalSteps = 5;
-  const [stepNumber, setStepNumber] = useState(1);
+  const [stepNumber, setStepNumber] = useState(() => state?.stepNumber ?? 1);
+
+  useEffect(() => {
+    const stepFromState = (location.state as { stepNumber?: number } | null)?.stepNumber;
+    if (typeof stepFromState === "number") setStepNumber(stepFromState);
+  }, [location.state]);
 
   const handleStepComplete = () => {
     // send the step id and tutorial id to the camera completion page

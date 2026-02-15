@@ -120,6 +120,25 @@ export default function PreviewPage() {
 
   const handleRetake = () => navigate(-1);
 
+  const handleTryAgain = () => {
+    navigate("/instruction", { state: { stepNumber: stepId, tutorialId } });
+  };
+
+  const handleContinueToNextStep = () => {
+    navigate("/verified", {
+      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, tutorialId },
+    });
+  };
+
+  const handleOverrideAndContinue = () => {
+    navigate("/verified", {
+      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, tutorialId },
+    });
+  };
+
+  const isWrong = match === false;
+  const isCorrect = match === true;
+
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
       <PageHeader onBack={handleBack} />
@@ -143,7 +162,7 @@ export default function PreviewPage() {
                   match ? "bg-green-600" : "bg-red-600"
                 }`}
               >
-                {match ? "TRUE" : "FALSE"}
+                {match ? "Correct" : "Incorrect"}
               </div>
             )}
           </div>
@@ -172,32 +191,72 @@ export default function PreviewPage() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={handleRetake}
-              className="flex-1 py-3 px-4 rounded-xl
-                         bg-white border-2 border-gray-300 text-gray-800 font-medium text-sm
-                         shadow-md hover:shadow-lg active:scale-95 transition"
-            >
-              Retake photo
-            </button>
+          {/* Case 1: Correct – green check, then proceed to next step */}
+          {isCorrect && (
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleContinueToNextStep}
+                className="w-full py-3 px-4 rounded-xl font-medium text-sm shadow-lg active:scale-95 transition
+                           bg-green-600 text-white hover:bg-green-700 hover:shadow-xl"
+              >
+                Continue to next step
+              </button>
+            </div>
+          )}
 
-            <button
-              type="button"
-              onClick={verify}
-              disabled={loading}
-              className={`flex-1 py-3 px-4 rounded-xl
-                         font-medium text-sm shadow-lg active:scale-95 transition
-                         ${
-                           loading
-                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                             : "bg-[#AF69EE] text-white hover:shadow-xl hover:brightness-110"
-                         }`}
-            >
-              {loading ? "Verifying…" : "Verify"}
-            </button>
-          </div>
+          {/* Case 2: Wrong – Try again (→ instructions) + Override link */}
+          {isWrong && (
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleTryAgain}
+                className="w-full py-3 px-4 rounded-xl font-medium text-sm shadow-md active:scale-95 transition
+                           bg-white border-2 border-gray-300 text-gray-800 hover:shadow-lg"
+              >
+                Try again
+              </button>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleOverrideAndContinue}
+                  className="text-sm text-gray-600 underline hover:text-[#AF69EE] transition"
+                >
+                  Override and continue to next step
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Before verification: Retake photo + Verify */}
+          {match === null && (
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={handleRetake}
+                className="flex-1 py-3 px-4 rounded-xl
+                           bg-white border-2 border-gray-300 text-gray-800 font-medium text-sm
+                           shadow-md hover:shadow-lg active:scale-95 transition"
+              >
+                Retake photo
+              </button>
+
+              <button
+                type="button"
+                onClick={verify}
+                disabled={loading}
+                className={`flex-1 py-3 px-4 rounded-xl
+                           font-medium text-sm shadow-lg active:scale-95 transition
+                           ${
+                             loading
+                               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                               : "bg-[#AF69EE] text-white hover:shadow-xl hover:brightness-110"
+                           }`}
+              >
+                {loading ? "Verifying…" : "Verify"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
