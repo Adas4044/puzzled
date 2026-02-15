@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import OrthopedicImg from "../assets/orthopedic.jpg";
+import SubjectImg from "../assets/Subject.png";
+import NutsBoltsImg from "../assets/nutsbolts.png";
 import PageHeader from "../components/PageHeader";
 
 interface TutorialProps {
@@ -14,17 +16,17 @@ export default function Tutorial({language, setLanguage}: TutorialProps) {
     {
       id: "treehacks",
       name: "Treehacks",
-      image: OrthopedicImg,
+      image: SubjectImg,
     },
     {
       id: "orthopedic",
       name: "Orthopedic Drill",
       image: OrthopedicImg,
     },
-        {
-      id: "orthopedic",
-      name: "Orthopedic Drill",
-      image: OrthopedicImg,
+    {
+      id: "nutsbolts",
+      name: "Nuts & Bolts",
+      image: NutsBoltsImg,
     },
   ];
 
