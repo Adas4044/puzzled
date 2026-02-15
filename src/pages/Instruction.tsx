@@ -56,7 +56,7 @@ export default function Instruction() {
   };
 
   const handleLiveHelp = () => {
-    navigate("/help");
+    navigate(`/help/${tutorialId}`, { state: { stepId: stepNumber, totalSteps } });
   };
 
   const handleOverride = () => {

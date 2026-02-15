@@ -4,16 +4,21 @@ import { HelpButton } from "../components/HelpButton";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 export default function Help() {
   const navigate = useNavigate();
-  const totalSteps = 5;
-  const [stepNumber] = useState(2);
+  const location = useLocation();
+  const state = location.state as { stepId?: number; totalSteps?: number} | null;
+  const stepNumber = state?.stepId ?? 1;
+  const { tutorialId: paramTutorialId } = useParams<{ tutorialId: string }>();
+  const tutorialId = paramTutorialId ?? "treehacks";
+
+  const totalSteps = state?.totalSteps ?? 5;
   const { t } = useTranslation(['instruction', 'common', 'help']);
 
   const handleBack = () => {
-    navigate("/instruction");
+    navigate(`/instruction/${tutorialId}`, { state: { stepNumber } });
   }
 
   return (

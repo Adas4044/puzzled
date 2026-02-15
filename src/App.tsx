@@ -28,7 +28,7 @@ function App() {
         <Route path="/analyzing" element={<Analyzing />} />
         <Route path="/alldone" element={<AllDone/>} />
         <Route path="/verified/:tutorialId" element={<Verified />} />
-        <Route path="/help" element={<Help />} />
+        <Route path="/help/:tutorialId" element={<Help />} />
       </Routes>
     </BrowserRouter>
   );
