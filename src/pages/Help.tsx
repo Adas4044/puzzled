@@ -1,7 +1,6 @@
 import PageHeader from "../components/PageHeader";
 import InstructionStepper from "../components/InstructionStepper";
 import { HelpButton } from "../components/HelpButton";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
