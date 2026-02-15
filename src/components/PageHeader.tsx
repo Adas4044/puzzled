@@ -18,7 +18,7 @@ export default function PageHeader({
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between z-[9999]">
       <button
         onClick={() => navigate(backTo)}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
