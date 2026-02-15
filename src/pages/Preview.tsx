@@ -147,10 +147,11 @@ export default function PreviewPage() {
   const handleTryAgain = () => {
     navigate(`/camera-step-completion/${routeTutorialId}`, { state: { stepId: stepId, totalSteps } });
   };
+  const newStepID = Math.min(stepId + 1, totalSteps);
 
   const handleContinueToNextStep = () => {
-    navigate("/verified", {
-      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, routeTutorialId },
+    navigate(`/instruction/${routeTutorialId}/${newStepID}`, {
+      state: { activeStep: stepId, totalSteps, nextStepNumber: newStepID, routeTutorialId },
     });
   };
 
@@ -163,7 +164,6 @@ export default function PreviewPage() {
       goToAllDone();
       return;
     }
-    const newStepID = Math.min(stepId + 1, totalSteps);
     navigate(`/instruction/${routeTutorialId}`, { state: { stepNumber: newStepID } });
   }
 
