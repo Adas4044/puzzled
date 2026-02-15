@@ -2,12 +2,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import InstructionStepper from "../components/InstructionStepper";
-import PlaceholderImg from "../assets/instruction-default.png"; // <-- replace with your placeholder
+import PlaceholderImg from "../assets/instruction-default.png";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const RUNPOD_URL = import.meta.env.VITE_RUNPOD_URL;
 const RUNPOD_API_KEY = import.meta.env.VITE_RUNPOD_API_KEY;
 const USE_RUNPOD = import.meta.env.VITE_USE_RUNPOD === "true";
+
+// Detector type: "claude" or "siamese"
+// - claude: Uses Claude Vision API (better accuracy, handles different angles)
+// - siamese: Uses local Siamese network (faster, no API cost, needs consistent angles)
 
 const DETECTOR_TYPE: "claude" | "siamese" = "claude";
 
@@ -27,6 +31,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
 
   const [loading, setLoading] = useState(false);
   const [match, setMatch] = useState<boolean | null>(null);
+  const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
 
   const title = useMemo(() => "Check Your Photo", []);
@@ -58,6 +63,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
     setError("");
     setLoading(true);
     setMatch(null);
+    setFeedback("");
 
     try {
       let data: any;
@@ -99,6 +105,12 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
       }
 
       setMatch(!!data.match);
+      setFeedback(data.feedback ?? "");
+
+      if ("speechSynthesis" in window && data.feedback) {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.feedback));
+      }
     } catch {
       setError("Verify failed. Check API URL / HTTPS / CORS.");
     } finally {
@@ -125,7 +137,6 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
               <p className="mt-2 text-sm text-gray-600">{description}</p>
             </div>
 
-            {/* Match badge (optional) */}
             {match !== null && (
               <div
                 className={`shrink-0 px-3 py-2 rounded-lg text-white font-bold text-sm ${
@@ -137,15 +148,13 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
             )}
           </div>
 
-          {/* Two tiles side by side */}
+          {/* Two tiles */}
           <div className="flex gap-3 w-full">
-            {/* Captured image */}
-            <div className="flex-1 min-w-0 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-100 aspect-square">
+            <div className="flex-1 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-100 aspect-square">
               <img src={imageSrc} alt="Captured" className="w-full h-full object-cover" />
             </div>
 
-            {/* Static placeholder (always) */}
-            <div className="flex-1 min-w-0 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-50 aspect-square">
+            <div className="flex-1 rounded-2xl border-2 border-gray-200 overflow-hidden bg-gray-50 aspect-square">
               <img
                 src={PlaceholderImg}
                 alt="Placeholder"
@@ -154,18 +163,22 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
             </div>
           </div>
 
+          {/* Backend feedback */}
+          {feedback && (
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+              {feedback}
+            </div>
+          )}
+
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          {/* Bottom actions */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={handleRetake}
               className="flex-1 py-3 px-4 rounded-xl
                          bg-white border-2 border-gray-300 text-gray-800 font-medium text-sm
-                         shadow-md transition-transform transition-shadow duration-200
-                         hover:shadow-lg hover:-translate-y-0.5
-                         active:translate-y-0 active:scale-95"
+                         shadow-md hover:shadow-lg active:scale-95 transition"
             >
               Retake photo
             </button>
@@ -175,12 +188,11 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
               onClick={verify}
               disabled={loading}
               className={`flex-1 py-3 px-4 rounded-xl
-                         font-medium text-sm shadow-lg transition-transform transition-shadow duration-200
-                         active:scale-95
+                         font-medium text-sm shadow-lg active:scale-95 transition
                          ${
                            loading
                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                             : "bg-[#AF69EE] text-white hover:shadow-xl hover:-translate-y-0.5 hover:brightness-110"
+                             : "bg-[#AF69EE] text-white hover:shadow-xl hover:brightness-110"
                          }`}
             >
               {loading ? "Verifying…" : "Verify"}
