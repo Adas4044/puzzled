@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 type Language = {
   code: string;
@@ -62,38 +62,42 @@ function FlagIcon({ countryCode }: { countryCode: string }) {
 }
 
 export default function LanguageSelector({
-  align = "right",
+    align = "right",
+    value,
+    onChange,
   }: {
     align?: "right" | "center";
+    value: string;
+    onChange: (code: string) => void;
   }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCode, setSelectedCode] = useState<string>("en");
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const selectedLanguage = useMemo(
-    () => LANGUAGES.find((l) => l.code === selectedCode) ?? LANGUAGES[0],
-    [selectedCode]
+    () => LANGUAGES.find((l) => l.code === value) ?? LANGUAGES[0],
+    [value]
   );
 
   const handleLanguageChange = (language: Language) => {
-    setSelectedCode(language.code);
+    onChange(language.code);
     setIsOpen(false);
   };
 
-  useEffect(() => {
-    const handleWindowClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      const btn = target?.closest("button");
+useEffect(() => {
+  const handleWindowClick = (event: MouseEvent) => {
+    const target = event.target as Node | null;
 
-      if (btn?.id === LANGUAGE_SELECTOR_ID) return;
-      setIsOpen(false);
-    };
+    if (target && rootRef.current?.contains(target)) return;
 
-    window.addEventListener("click", handleWindowClick);
-    return () => window.removeEventListener("click", handleWindowClick);
-  }, []);
+    setIsOpen(false);
+  };
+
+  window.addEventListener("click", handleWindowClick);
+  return () => window.removeEventListener("click", handleWindowClick);
+}, []);
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       <button
         id={LANGUAGE_SELECTOR_ID}
         type="button"

@@ -2,8 +2,12 @@ import LanguageSelector from "../components/LanguageSelector";
 import { useNavigate } from "react-router-dom";
 
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+type LanguageProps = {
+  language: string;
+  setLanguage: (lang: string) => void;
+};
 
-export default function Language(){
+export default function Language({language, setLanguage}: LanguageProps){
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col justify-center w-full px-6 pt-10 gap-8">
@@ -11,7 +15,11 @@ export default function Language(){
         Select language
       </h2>
       <div className="w-full max-w-sm mx-auto flex flex-col gap-4">
-        <LanguageSelector align="center"/>
+        <LanguageSelector
+          align="center"
+          value={language}
+          onChange={setLanguage}
+        />
         <div className="flex justify-end">
           <button className="inline-flex items-center gap-2 bg-[#AF69EE] text-white px-5 py-3 rounded-xl transition active:scale-95"
           onClick={() => navigate("/tutorial")}>

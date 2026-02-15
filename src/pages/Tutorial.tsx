@@ -1,9 +1,13 @@
-import LanguageSelector from "../components/LanguageSelector";
 import { useNavigate } from "react-router-dom";
 import OrthopedicImg from "../assets/orthopedic.jpg";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import PageHeader from "../components/PageHeader";
 
-export default function Tutorial() {
+interface TutorialProps {
+  language: string;
+  setLanguage: (lang: string) => void;
+}
+
+export default function Tutorial({language, setLanguage}: TutorialProps) {
   const navigate = useNavigate();
 
   const projects = [
@@ -26,18 +30,7 @@ export default function Tutorial() {
 
   return (
     <div className="min-h-screen flex flex-col w-full px-6 pt-10 gap-8 bg-[#F5F5F5]">
-    <div className="flex items-center justify-between">
-      <button
-        onClick={() => navigate("/")}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
-      >
-        <ArrowLeftIcon className="w-5 h-5" />
-        <span className="text-sm font-medium">Back</span>
-      </button>
-      <div className="w-30">
-        <LanguageSelector align="right" />
-      </div>
-    </div>
+    <PageHeader backTo="/" language={language} setLanguage={setLanguage}/>
       <h2 className="text-3xl font-bold text-gray-700 text-center">
         Select Tutorial
       </h2>
