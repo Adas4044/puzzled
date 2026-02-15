@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Camera from "./pages/Camera";
+import SetupCamera from "./pages/SetupCamera";
 import Preview from "./pages/Preview";
 import Language from "./pages/Language";
 import Tutorial from "./pages/Tutorial";
@@ -12,12 +13,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/camera" element={<Camera />} />
-        <Route path="/preview" element={<Preview />} />
         <Route path="/" element={<Language language={language} setLanguage={setLanguage} />} />
         <Route path="/tutorial" element={<Tutorial language={language} setLanguage={setLanguage} />} />
-        <Route path="/zoom" element={<Zoom />} />
+        <Route path="/camerasetup" element={<SetupCamera />} />
         <Route path="/instruction" element={<Instruction language={language} setLanguage={setLanguage}/>} />
+        <Route path="/camera" element={<Camera />} />
+        <Route path="/preview" element={<Preview />} />
+        <Route path="/zoom" element={<Zoom />} />
       </Routes>
     </BrowserRouter>
   );
