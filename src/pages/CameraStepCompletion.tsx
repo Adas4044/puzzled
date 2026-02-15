@@ -6,12 +6,7 @@ import CameraCapture from "../components/CameraCapture";
 import type { CameraCaptureHandle } from "../components/CameraCapture";
 import { CameraIcon } from "@heroicons/react/24/outline";
 
-interface CameraStepCompletionProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function CameraStepCompletionPage({ language, setLanguage }: CameraStepCompletionProps) {
+export default function CameraStepCompletionPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,7 +35,7 @@ export default function CameraStepCompletionPage({ language, setLanguage }: Came
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/instruction" language={language} setLanguage={setLanguage} />
+      <PageHeader backTo="/instruction" />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">

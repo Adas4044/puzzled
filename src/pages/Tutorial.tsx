@@ -1,48 +1,56 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PageHeader from "../components/PageHeader";
 import { fetchAllTutorials } from "../services/tutorialService";
 import { ApiError } from "../services/api";
+import { translateTutorials } from "../utils/translateContent";
 import type { Tutorial as TutorialType } from "../types/database";
 
-interface TutorialProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function Tutorial({ language, setLanguage }: TutorialProps) {
+export default function Tutorial() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation(['tutorial', 'common', 'errors']);
 
   const [tutorials, setTutorials] = useState<TutorialType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch tutorials on component mount and when language changes
   useEffect(() => {
     async function loadTutorials() {
       try {
         setLoading(true);
         setError(null);
+
+        // Fetch tutorials from database (English)
         const data = await fetchAllTutorials();
-        setTutorials(data);
+
+        // Translate if not English (uses cache when available)
+        const translatedData = await translateTutorials(data, i18n.language);
+
+        setTutorials(translatedData);
       } catch (err) {
-        setError(err instanceof ApiError ? err.message : "An unexpected error occurred");
-        console.error("Error loading tutorials:", err);
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError(t('errors:unexpected'));
+        }
+        console.error('Error loading tutorials:', err);
       } finally {
         setLoading(false);
       }
     }
 
     loadTutorials();
-  }, []);
+  }, [i18n.language, t]);
 
   const handleRetry = () => window.location.reload();
 
   return (
     <div className="min-h-screen flex flex-col w-full px-6 py-10 gap-8">
-      <PageHeader backTo="/" language={language} setLanguage={setLanguage} />
-
+      <PageHeader backTo="/" />
       <h2 className="text-3xl font-bold text-gray-700 text-center">
-        Select Tutorial
+        {t('tutorial:title')}
       </h2>
 
       {/* Loading state */}
@@ -56,14 +64,13 @@ export default function Tutorial({ language, setLanguage }: TutorialProps) {
       {error && !loading && (
         <div className="max-w-2xl mx-auto w-full">
           <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-sm">
-            <p className="text-gray-900 font-semibold">Failed to load tutorials</p>
+            <p className="text-gray-900 font-semibold">{t('tutorial:errors.failedToLoad')}</p>
             <p className="text-gray-600 text-sm mt-1">{error}</p>
-
             <button
               onClick={handleRetry}
               className="mt-4 inline-flex items-center justify-center bg-[#AF69EE] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition hover:brightness-110 active:scale-95"
             >
-              Retry
+              {t('common:buttons.retry')}
             </button>
           </div>
         </div>
@@ -75,7 +82,7 @@ export default function Tutorial({ language, setLanguage }: TutorialProps) {
           {tutorials.length === 0 ? (
             <div className="sm:col-span-2">
               <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
-                <p className="text-gray-900 font-semibold">No tutorials available yet</p>
+                <p className="text-gray-900 font-semibold">{t('tutorial:noTutorials')}</p>
                 <p className="text-gray-600 text-sm mt-1">Check back soon.</p>
               </div>
             </div>
@@ -98,7 +105,7 @@ export default function Tutorial({ language, setLanguage }: TutorialProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                      <span className="text-gray-400 text-sm">No image</span>
+                      <span className="text-gray-400 text-sm">{t('common:noImage')}</span>
                     </div>
                   )}
                 </div>
@@ -118,7 +125,7 @@ export default function Tutorial({ language, setLanguage }: TutorialProps) {
                     onClick={() => navigate("/camerasetup", { state: { tutorialId: tutorial.id } })}
                     className="w-full bg-[#AF69EE] text-white px-4 py-2 rounded-xl text-sm font-medium transition active:scale-95"
                   >
-                    Start Tutorial
+                    {t('tutorial:startTutorial')}
                   </button>
                 </div>
               </div>

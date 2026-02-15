@@ -1,0 +1,9 @@
+{
+  "title": "Select Tutorial",
+  "startTutorial": "Start Tutorial",
+  "noTutorials": "No tutorials available yet",
+  "errors": {
+    "failedToLoad": "Failed to load tutorials",
+    "tryAgain": "Please try again"
+  }
+}

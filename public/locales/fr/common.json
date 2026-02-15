@@ -1,0 +1,16 @@
+{
+  "buttons": {
+    "back": "Retour",
+    "start": "Commencer",
+    "cancel": "Annuler",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "verify": "Vérifier",
+    "retake": "Reprendre"
+  },
+  "loading": "Chargement...",
+  "verifying": "Vérification...",
+  "savedSuccessfully": "✅ Enregistré avec succès",
+  "previewStep": "Aperçu de l'étape {{stepId}}",
+  "noImage": "Pas d'image"
+}

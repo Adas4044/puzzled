@@ -1,0 +1,6 @@
+{
+  "stepLabel": "Paso {{number}} de {{total}}",
+  "stepComplete": "Paso completo",
+  "getLiveHelp": "Obtener ayuda en vivo",
+  "completionHint": "(Una vez terminado, selecciona <strong>Paso completo</strong> para verificar tu trabajo.)"
+}

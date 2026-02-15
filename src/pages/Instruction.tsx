@@ -3,18 +3,15 @@ import PageHeader from "../components/PageHeader";
 import InstructionDefaultImg from "../assets/instruction-default.png";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
-interface InstructionProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function Instruction({ language, setLanguage }: InstructionProps) {
+export default function Instruction() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { tutorialId?: string } | null;
   const tutorialId = state?.tutorialId ?? "treehacks";
+  const { t } = useTranslation(['instruction', 'common']);
 
   const totalSteps = 5;
   const [stepNumber] = useState(1);
@@ -30,7 +27,7 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/camerasetup" language={language} setLanguage={setLanguage} />
+      <PageHeader backTo="/camerasetup" />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
@@ -38,7 +35,7 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
 
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide">
-              Step {stepNumber} of {totalSteps}
+              {t('instruction:stepLabel', { number: stepNumber, total: totalSteps })}
             </p>
 
             <h2 className="mt-1 text-2xl font-bold text-gray-900">
@@ -50,8 +47,10 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
             </p>
 
             <p className="mt-2 text-sm text-gray-600">
-              (Once finished, select{" "}
-              <span className="font-medium text-[#AF69EE]">Step complete</span> to verify your work.)
+              <Trans
+                i18nKey="instruction:completionHint"
+                components={{ strong: <span className="font-medium text-[#AF69EE]" /> }}
+              />
             </p>
           </div>
 
@@ -74,7 +73,7 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
                          active:translate-y-0 active:scale-95"
             >
               <CameraIcon className="w-5 h-5 stroke-2" />
-              Step complete
+              {t('instruction:stepComplete')}
             </button>
 
             <button
@@ -87,7 +86,7 @@ export default function Instruction({ language, setLanguage }: InstructionProps)
                          active:translate-y-0 active:scale-95"
             >
               <QuestionMarkCircleIcon className="w-5 h-5 stroke-2" />
-              Get live help
+              {t('instruction:getLiveHelp')}
             </button>
           </div>
         </div>

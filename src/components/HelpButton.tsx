@@ -4,10 +4,12 @@
  */
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { createHelpMeeting, ApiError } from "../services/api";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 export function HelpButton() {
+  const { t } = useTranslation('errors');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,13 +25,13 @@ export function HelpButton() {
       const apiError = err as ApiError;
 
       if (apiError.statusCode === 503) {
-        setError("Service temporarily unavailable. Please try again.");
+        setError(t('serviceUnavailable'));
       } else if (apiError.statusCode >= 500) {
-        setError("Server error. Please contact support.");
+        setError(t('serverError'));
       } else if (apiError.statusCode === 0) {
-        setError("Network error. Check your connection and try again.");
+        setError(t('network'));
       } else {
-        setError(apiError.detail || "Failed to create meeting. Please try again.");
+        setError(apiError.detail || t('apiError'));
       }
 
       console.error("Help request error:", apiError);
@@ -43,7 +45,7 @@ export function HelpButton() {
       <button
         onClick={handleHelpRequest}
         disabled={isLoading}
-        aria-label="Request help"
+        aria-label={t('requestHelp')}
         className={`
           w-full flex items-center justify-center gap-2
           py-3 px-4 rounded-xl
@@ -78,12 +80,12 @@ export function HelpButton() {
                 d="M4 12a8 8 0 018-8v8H4z"
               />
             </svg>
-            Creating Meeting...
+            {t('creatingMeeting')}
           </>
         ) : (
           <>
             <QuestionMarkCircleIcon className="w-5 h-5 stroke-2" />
-            Get Live Help
+            {t('getLiveHelp')}
           </>
         )}
       </button>

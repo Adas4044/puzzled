@@ -2,20 +2,17 @@ import PageHeader from "../components/PageHeader";
 import InstructionStepper from "../components/InstructionStepper";
 import { HelpButton } from "../components/HelpButton";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 
-interface HelpProps {
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function Help({ language, setLanguage }: HelpProps) {
+export default function Help() {
   const totalSteps = 5;
   const [stepNumber] = useState(2);
+  const { t } = useTranslation(['instruction', 'common', 'help']);
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/instruction" language={language} setLanguage={setLanguage} />
+      <PageHeader backTo="/instruction" />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
@@ -23,15 +20,15 @@ export default function Help({ language, setLanguage }: HelpProps) {
 
           <div className="space-y-4">
       <p className="text-xs text-gray-500 uppercase tracking-wide">
-        Step {stepNumber} of {totalSteps}
+        {t('instruction:stepLabel', { number: stepNumber, total: totalSteps })}
       </p>
 
       <h2 className="text-2xl font-bold text-gray-900">
-        Live Help
+        {t('help:heading')}
       </h2>
 
       <p className="text-sm text-gray-600 leading-relaxed">
-        Get a technician to guide you in real time so you can continue confidently.
+        {t('help:description')}
       </p>
 
       {/* Status Card */}
@@ -43,10 +40,10 @@ export default function Help({ language, setLanguage }: HelpProps) {
 
         <div>
           <p className="text-sm font-semibold text-gray-900">
-            Technician available
+            {t('help:technicianStatus')}
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Usually responds in under 2 minutes
+            {t('help:responseTime')}
           </p>
         </div>
       </div>
@@ -60,10 +57,10 @@ export default function Help({ language, setLanguage }: HelpProps) {
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">
-                  Quick & secure
+                  {t('help:securityTitle')}
                 </p>
                 <p className="mt-1 text-sm text-gray-700">
-                  You’ll join a Zoom call in a new tab. Your progress here will stay saved.
+                  {t('help:zoomDescription')}
                 </p>
               </div>
             </div>
@@ -76,7 +73,7 @@ export default function Help({ language, setLanguage }: HelpProps) {
 
           {/* Tiny footer hint */}
           <p className="text-xs text-gray-400 text-center pt-1">
-            If you don’t see a response, check pop-up blockers for Zoom.
+            {t('help:popupBlockerHint')}
           </p>
         </div>
       </div>

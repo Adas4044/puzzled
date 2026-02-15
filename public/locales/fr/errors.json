@@ -1,0 +1,12 @@
+{
+  "network": "Erreur réseau. Vérifiez votre connexion et réessayez.",
+  "serverError": "Erreur du serveur. Veuillez contacter le support.",
+  "serviceUnavailable": "Service temporairement indisponible. Veuillez réessayer.",
+  "apiError": "Échec de la création de la réunion. Veuillez réessayer.",
+  "verifyFailed": "Échec de la vérification. Vérifiez l'URL de l'API / HTTPS / CORS.",
+  "noPhoto": "Aucune photo trouvée. Revenez en arrière et prenez une photo.",
+  "unexpected": "Une erreur inattendue s'est produite",
+  "creatingMeeting": "Création de la réunion...",
+  "getLiveHelp": "Obtenir de l'aide en direct",
+  "requestHelp": "Demander de l'aide"
+}
