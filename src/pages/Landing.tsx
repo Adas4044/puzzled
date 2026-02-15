@@ -156,7 +156,7 @@ export default function Landing() {
 
   useEffect(() => {
     if (phase !== "solved") return;
-    const t = setTimeout(() => navigate("/tutorial"), 3500);
+    const t = setTimeout(() => navigate("/tutorial"), 10000);
     return () => clearTimeout(t);
   }, [phase, navigate]);
 
@@ -332,7 +332,7 @@ export default function Landing() {
             >
               Continue
             </button>
-            <p className="text-xs" style={{ color: THEME.textMuted }}>Continuing in a few seconds…</p>
+            <p className="text-xs" style={{ color: THEME.textMuted }}>Continuing in a few moments…</p>
           </div>
         )}
       </div>
