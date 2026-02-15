@@ -154,11 +154,18 @@ export default function PreviewPage() {
     });
   };
 
-  const handleOverrideAndContinue = () => {
-    navigate("/verified", {
-      state: { activeStep: stepId, totalSteps, nextStepNumber: stepId + 1, routeTutorialId },
-    });
+  const goToAllDone = () => {
+    navigate("/alldone");
   };
+    const handleOverrideAndContinue = () => {
+    if (stepId >= totalSteps) {
+      // done with all steps
+      goToAllDone();
+      return;
+    }
+    const newStepID = Math.min(stepId + 1, totalSteps);
+    navigate(`/instruction/${routeTutorialId}`, { state: { stepNumber: newStepID } });
+  }
 
   const isWrong = match === false;
   const isCorrect = match === true;
