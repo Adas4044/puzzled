@@ -21,21 +21,34 @@ export default function Instruction() {
     navigate("/camera-step-completion", { state: { stepId: stepNumber, tutorialId } });
   };
 
+  const goToAllDone = () => {
+    navigate("/alldone");
+  };
+
   const handleLiveHelp = () => {
     navigate("/help");
   };
 
   const handleOverride = () => {
-    setStepNumber(prev => prev + 1);
-    navigate("/instruction");
-    // TODO: Keep in mind clicking BACK for overridden step will show weird behavior???
+    if (stepNumber >= totalSteps) {
+      // done with all steps
+      goToAllDone();
+      return;
+    }
+    setStepNumber((prev) => Math.min(prev + 1, totalSteps));
   }
 
-  // TODO: clicking BACK should decrement step count
+    const handleBack = () => {
+    if (stepNumber <= 1) {
+      navigate("/camerasetup");
+      return;
+    }
+    setStepNumber((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/camerasetup" />
+      <PageHeader onBack={handleBack} />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">

@@ -4,15 +4,21 @@ import { HelpButton } from "../components/HelpButton";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 export default function Help() {
+  const navigate = useNavigate();
   const totalSteps = 5;
   const [stepNumber] = useState(2);
   const { t } = useTranslation(['instruction', 'common', 'help']);
 
+  const handleBack = () => {
+    navigate("/instruction");
+  }
+
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/instruction" />
+      <PageHeader onBack={handleBack} />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">

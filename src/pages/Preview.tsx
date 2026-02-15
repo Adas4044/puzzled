@@ -35,6 +35,10 @@ export default function PreviewPage() {
     []
   );
 
+  const handleBack = () => {
+    navigate("/camera-step-completion");
+  }
+
   if (!state) {
     return (
       <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
@@ -118,7 +122,7 @@ export default function PreviewPage() {
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-10">
-      <PageHeader backTo="/camera-step-completion" />
+      <PageHeader onBack={handleBack} />
 
       <div className="mt-8 max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">

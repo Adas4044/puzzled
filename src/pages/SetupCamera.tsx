@@ -36,9 +36,13 @@ export default function SetupCameraPage() {
     navigate("/instruction", { replace: true, state: { tutorialId } });
   };
 
+  const handleBack = () => {
+    navigate("/tutorial");
+  }
+
   return (
     <div className="h-screen w-full bg-[#F8F5FF] px-6 pt-10 pb-6 overflow-hidden flex flex-col">
-      <PageHeader backTo="/tutorial" />
+      <PageHeader onBack={handleBack} />
 
       <div className="mt-6 max-w-3xl w-full mx-auto flex-1 min-h-0">
         {/* Main card wrapper */}
