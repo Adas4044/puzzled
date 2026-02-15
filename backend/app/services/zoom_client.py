@@ -4,10 +4,13 @@ Handles Server-to-Server OAuth and meeting creation
 """
 
 import base64
+import logging
 from datetime import datetime, timedelta
 from typing import Optional
 
 import httpx
+
+logger = logging.getLogger(__name__)
 
 
 class ZoomClient:
@@ -129,6 +132,14 @@ class ZoomClient:
             response.raise_for_status()
 
             meeting_data = response.json()
+
+            # Log meeting settings to verify join_before_host is applied
+            settings = meeting_data.get("settings", {})
+            logger.info(
+                f"Meeting created - ID: {meeting_data['id']}, "
+                f"join_before_host: {settings.get('join_before_host')}, "
+                f"waiting_room: {settings.get('waiting_room')}"
+            )
 
             return {
                 "join_url": meeting_data["join_url"],

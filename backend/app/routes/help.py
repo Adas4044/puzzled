@@ -96,6 +96,7 @@ async def create_help_meeting(
                 await email_service.send_meeting_invitation(
                     recipient=settings.help_request_recipient,
                     meeting_data=meeting_data,
+                    start_url=meeting_data.get("start_url"),  # Include host start URL
                 )
                 logger.info(f"Email sent to {settings.help_request_recipient}")
             except Exception as email_error:

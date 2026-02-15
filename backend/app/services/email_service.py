@@ -49,6 +49,7 @@ class EmailService:
         self,
         recipient: str,
         meeting_data: dict,
+        start_url: str | None = None,
     ) -> bool:
         """
         Send Zoom meeting invitation email.
@@ -56,6 +57,7 @@ class EmailService:
         Args:
             recipient: Email address to send to
             meeting_data: Dict with join_url, meeting_id, password
+            start_url: Optional host start URL (for on-call engineer to become host)
 
         Returns:
             bool: True if sent successfully, False otherwise
@@ -68,8 +70,8 @@ class EmailService:
             message["To"] = recipient
 
             # Generate content
-            text_content = self._create_text_content(meeting_data)
-            html_content = self._create_html_content(meeting_data)
+            text_content = self._create_text_content(meeting_data, start_url)
+            html_content = self._create_html_content(meeting_data, start_url)
 
             # Attach both versions (email clients will pick the best one)
             part1 = MIMEText(text_content, "plain")
@@ -95,12 +97,13 @@ class EmailService:
             logger.error(f"Failed to send email to {recipient}: {str(e)}")
             return False
 
-    def _create_text_content(self, meeting_data: dict) -> str:
+    def _create_text_content(self, meeting_data: dict, start_url: str | None = None) -> str:
         """
         Create plain text email content (fallback).
 
         Args:
             meeting_data: Dict with meeting details
+            start_url: Optional host start URL
 
         Returns:
             str: Plain text email content
@@ -111,6 +114,19 @@ class EmailService:
             else ""
         )
 
+        # Add start URL section if provided
+        host_section = ""
+        if start_url:
+            host_section = f"""
+
+START MEETING AS HOST:
+{start_url}
+
+IMPORTANT: Use the link above to START the meeting as the host. This will allow
+the student to join immediately. Once you start the meeting, they can join using
+their link.
+"""
+
         return f"""
 HACKATHON HELP REQUEST
 
@@ -120,8 +136,8 @@ MEETING DETAILS:
 Meeting ID: {meeting_data['meeting_id']}
 {password_line}
 Duration: 40 minutes
-
-JOIN MEETING:
+{host_section}
+JOIN MEETING (as participant):
 {meeting_data['join_url']}
 
 ---
@@ -129,12 +145,13 @@ This is an automated message from the Hackathon Help System
 Powered by TreeHacks26
         """.strip()
 
-    def _create_html_content(self, meeting_data: dict) -> str:
+    def _create_html_content(self, meeting_data: dict, start_url: str | None = None) -> str:
         """
         Create HTML email content with professional styling.
 
         Args:
             meeting_data: Dict with meeting details
+            start_url: Optional host start URL
 
         Returns:
             str: HTML email content
@@ -142,6 +159,20 @@ Powered by TreeHacks26
         password_section = ""
         if meeting_data.get('password'):
             password_section = f"<p><strong>Password:</strong> {meeting_data['password']}</p>"
+
+        # Add host start URL section if provided
+        host_section = ""
+        if start_url:
+            host_section = f"""
+            <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                <h3 style="margin-top: 0; color: #b45309;">⚠️ Important: Start as Host</h3>
+                <p style="margin-bottom: 15px;">A student is waiting for help. Click the button below to <strong>START the meeting as the host</strong>. This will allow them to join immediately.</p>
+                <div style="text-align: center; margin: 15px 0;">
+                    <a href="{start_url}" class="button" style="background: #f59e0b; font-size: 16px;">🎯 Start Meeting as Host</a>
+                </div>
+                <p style="font-size: 12px; color: #92400e; margin-bottom: 0;">Use this link to become the meeting host. Once you start, the student can join.</p>
+            </div>
+            """
 
         return f"""
 <!DOCTYPE html>
@@ -161,12 +192,12 @@ Powered by TreeHacks26
 <body>
     <div class="container">
         <div class="header">
-            <h1 style="margin: 0;">Your Hackathon Help Request</h1>
+            <h1 style="margin: 0;">🆘 Hackathon Help Request</h1>
         </div>
         <div class="content">
             <p>Hello,</p>
             <p>A new help request has been submitted at the hackathon. A Zoom meeting has been created for you.</p>
-
+            {host_section}
             <div class="meeting-details">
                 <h2 style="margin-top: 0;">Meeting Details</h2>
                 <p><strong>Meeting ID:</strong> {meeting_data['meeting_id']}</p>
@@ -175,7 +206,7 @@ Powered by TreeHacks26
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{meeting_data['join_url']}" class="button">Join Zoom Meeting</a>
+                <a href="{meeting_data['join_url']}" class="button">Join as Participant</a>
             </div>
 
             <p style="font-size: 14px;">Or copy and paste this URL into your browser:</p>

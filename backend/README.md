@@ -42,8 +42,6 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
-**💡 Tip**: You'll see `(venv)` in your terminal when activated.
-
 ### Step 2: Install Dependencies
 
 ```bash
@@ -83,7 +81,7 @@ LOG_LEVEL=INFO
 
 ```bash
 # Make sure you're in backend/ directory with venv activated
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload
 ```
 
 Backend runs on: http://localhost:8000
