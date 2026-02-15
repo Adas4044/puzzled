@@ -159,7 +159,7 @@ export default function Landing() {
 
   useEffect(() => {
     if (phase !== "solved") return;
-    const t = setTimeout(() => navigate("/tutorial"), 10000);
+    const t = setTimeout(() => navigate("/tutorial"), 7000);
     return () => clearTimeout(t);
   }, [phase, navigate]);
 
@@ -327,14 +327,6 @@ export default function Landing() {
         </div>
         {phase === "solved" && (
           <div className="mt-12 flex flex-col items-center gap-3">
-            <button
-              type="button"
-              onClick={() => navigate("/tutorial")}
-              className="px-8 py-3.5 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#AF69EE] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f0d14]"
-              style={{ background: `linear-gradient(135deg, #9d5ad4 0%, ${THEME.accent} 100%)` }}
-            >
-              Continue
-            </button>
             <p className="text-xs" style={{ color: THEME.textMuted }}>Continuing in a few moments…</p>
           </div>
         )}
