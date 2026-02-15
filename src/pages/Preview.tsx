@@ -15,7 +15,7 @@ const USE_RUNPOD = import.meta.env.VITE_USE_RUNPOD === "true";
 
 const DETECTOR_TYPE: "claude" | "siamese" = "claude";
 
-type PreviewState = { stepId: number; imageSrc: string };
+type PreviewState = { stepId: number; imageSrc: string; tutorialId?: string };
 
 interface PreviewPageProps {
   language: string;
@@ -57,7 +57,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
     );
   }
 
-  const { stepId, imageSrc } = state;
+  const { stepId, imageSrc, tutorialId = "treehacks" } = state;
 
   const verify = async () => {
     setError("");
@@ -78,7 +78,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
             Authorization: `Bearer ${RUNPOD_API_KEY}`,
           },
           body: JSON.stringify({
-            input: { image_base64: base64Data, step_id: stepId },
+            input: { image_base64: base64Data, step_id: stepId, tutorial_id: tutorialId },
           }),
         });
 
@@ -94,6 +94,7 @@ export default function PreviewPage({ language, setLanguage }: PreviewPageProps)
         form.append("image", file);
         form.append("stepId", String(stepId));
         form.append("detector_type", DETECTOR_TYPE);
+        form.append("tutorial_id", tutorialId);
 
         const response = await fetch(`${API_URL}/verify/verify-step`, {
           method: "POST",

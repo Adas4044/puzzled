@@ -15,8 +15,9 @@ export default function CameraStepCompletionPage({ language, setLanguage }: Came
   const navigate = useNavigate();
   const location = useLocation();
 
-  const state = location.state as { stepId?: number } | null;
+  const state = location.state as { stepId?: number; tutorialId?: string } | null;
   const stepId = state?.stepId ?? 1;
+  const tutorialId = state?.tutorialId ?? "treehacks";
 
   const totalSteps = 5;
 
@@ -30,7 +31,7 @@ export default function CameraStepCompletionPage({ language, setLanguage }: Came
   const [cameraReady, setCameraReady] = useState(false);
 
   const handleCaptured = (imageSrc: string) => {
-    navigate("/preview", { state: { stepId, imageSrc } });
+    navigate("/preview", { state: { stepId, imageSrc, tutorialId } });
   };
 
   const handleShutter = () => {

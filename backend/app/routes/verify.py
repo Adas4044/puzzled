@@ -52,7 +52,8 @@ class VerificationLog(BaseModel):
 async def verify_step(
     image: UploadFile = File(...),
     stepId: int = Form(...),
-    detector_type: str = Form(default="claude")
+    detector_type: str = Form(default="claude"),
+    tutorial_id: str = Form(default="treehacks")
 ):
     """
     Verify a captured image against a reference step.
@@ -60,8 +61,9 @@ async def verify_step(
     - **image**: JPEG image file from camera
     - **stepId**: The step number to verify against
     - **detector_type**: "claude" or "siamese" (default: claude)
+    - **tutorial_id**: Tutorial identifier (e.g., "treehacks", "nutsbolts")
     """
-    logger.info(f"Received verification request for step {stepId} using {detector_type} detector")
+    logger.info(f"Received verification request for step {stepId} using {detector_type} detector, tutorial={tutorial_id}")
 
     # Validate file type
     if not image.content_type or not image.content_type.startswith("image/"):
@@ -76,7 +78,7 @@ async def verify_step(
         if detector_type == "siamese":
             detector = get_siamese()
         else:
-            detector = get_detector()
+            detector = get_detector(tutorial_id)
 
         result = detector.verify_step(image_bytes, stepId)
 

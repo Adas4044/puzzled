@@ -76,13 +76,14 @@ class VerificationResult:
 class StepDetector:
     """Step verification using Claude's vision capabilities."""
 
-    def __init__(self, reference_dir: str, api_key: str = None):
+    def __init__(self, reference_dir: str, api_key: str = None, tutorial_id: str = "treehacks"):
         """
         Initialize the detector.
 
         Args:
             reference_dir: Directory containing step reference images
             api_key: Anthropic API key (defaults to ANTHROPIC_API_KEY env var)
+            tutorial_id: Tutorial identifier for tutorial-specific prompts
         """
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         if not self.api_key:
@@ -90,6 +91,7 @@ class StepDetector:
 
         self.client = anthropic.Anthropic(api_key=self.api_key)
         self.reference_dir = Path(reference_dir)
+        self.tutorial_id = tutorial_id
         self.reference_images = self._load_reference_images()
 
     def _load_reference_images(self) -> dict[int, list[Path]]:
@@ -183,6 +185,9 @@ class StepDetector:
         else:
             ref_b64 = self._image_to_base64(ref_path)
 
+        # Get tutorial-specific prompt additions
+        tutorial_specific = TUTORIAL_PROMPTS.get(self.tutorial_id, "")
+
         prompt = f"""You are a step verification assistant. Compare these two images:
 
 IMAGE 1 (Reference): This shows what step {target_step} of the {task_context} should look like when completed correctly.
@@ -197,6 +202,7 @@ Consider:
 3. Is the overall shape/structure matching?
 4. ORIENTATION DOES NOT MATTER - the piece can be rotated or flipped and still be correct.
 5. Minor differences in angle/lighting are acceptable.
+{tutorial_specific}
 
 Respond in this exact format:
 MATCH: [YES/NO]
@@ -274,14 +280,30 @@ EXPLANATION: [Brief explanation of your assessment]"""
         return max(self.reference_images.keys()) if self.reference_images else 0
 
 
-# Singleton instance (lazy loaded)
-_detector: Optional[StepDetector] = None
+# Tutorial-specific prompts
+TUTORIAL_PROMPTS = {
+    "nutsbolts": """For hardware (screws, bolts, nuts): Pay close attention to:
+- Screw/bolt LENGTH
+- Nut SIZE and type (hex nut vs wing nut)
+- Assembly state (loose vs tightened, partially vs fully assembled)
+- Count the number of components - must match exactly""",
+    "treehacks": """For Lego pieces: Focus on the overall shape and color of the assembled pieces.""",
+}
+
+# Cache detectors by tutorial_id
+_detectors: dict[str, StepDetector] = {}
 
 
-def get_detector() -> StepDetector:
-    """Get or create the detector instance."""
-    global _detector
-    if _detector is None:
-        reference_dir = os.getenv("REFERENCE_DIR", "./reference_images")
-        _detector = StepDetector(reference_dir)
-    return _detector
+def get_detector(tutorial_id: str = "treehacks") -> StepDetector:
+    """Get or create the detector instance for a specific tutorial."""
+    global _detectors
+    if tutorial_id not in _detectors:
+        base_dir = os.getenv("REFERENCE_DIR", "./reference_images")
+        # Look for tutorial-specific subfolder, fall back to base dir
+        tutorial_dir = Path(base_dir) / tutorial_id
+        if tutorial_dir.exists():
+            reference_dir = str(tutorial_dir)
+        else:
+            reference_dir = base_dir
+        _detectors[tutorial_id] = StepDetector(reference_dir, tutorial_id=tutorial_id)
+    return _detectors[tutorial_id]

@@ -115,7 +115,7 @@ export default function Tutorial({ language, setLanguage }: TutorialProps) {
                   )}
 
                   <button
-                    onClick={() => navigate(`/steps/${tutorial.id}`)}
+                    onClick={() => navigate("/camerasetup", { state: { tutorialId: tutorial.id } })}
                     className="w-full bg-[#AF69EE] text-white px-4 py-2 rounded-xl text-sm font-medium transition active:scale-95"
                   >
                     Start Tutorial

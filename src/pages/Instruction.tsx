@@ -2,7 +2,7 @@ import InstructionStepper from "../components/InstructionStepper";
 import PageHeader from "../components/PageHeader";
 import InstructionDefaultImg from "../assets/instruction-default.png";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CameraIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 interface InstructionProps {
@@ -12,13 +12,16 @@ interface InstructionProps {
 
 export default function Instruction({ language, setLanguage }: InstructionProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { tutorialId?: string } | null;
+  const tutorialId = state?.tutorialId ?? "treehacks";
 
   const totalSteps = 5;
   const [stepNumber] = useState(1);
 
   const handleStepComplete = () => {
-    // send the step id to the camera completion page
-    navigate("/camera-step-completion", { state: { stepId: stepNumber } });
+    // send the step id and tutorial id to the camera completion page
+    navigate("/camera-step-completion", { state: { stepId: stepNumber, tutorialId } });
   };
 
   const handleLiveHelp = () => {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import PageHeader from "../components/PageHeader";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -13,6 +13,9 @@ interface SetupCameraProps {
 
 export default function SetupCameraPage({ language, setLanguage }: SetupCameraProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { tutorialId?: string } | null;
+  const tutorialId = state?.tutorialId ?? "treehacks";
 
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [error, setError] = useState("");
@@ -33,7 +36,7 @@ export default function SetupCameraPage({ language, setLanguage }: SetupCameraPr
       localStorage.setItem(SETUP_DONE_KEY, "true");
     } catch {}
 
-    navigate("/instruction", { replace: true });
+    navigate("/instruction", { replace: true, state: { tutorialId } });
   };
 
   return (
