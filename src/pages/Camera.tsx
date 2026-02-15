@@ -1,58 +1,22 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CameraCapture from "../components/CameraCapture";
 
 export default function CameraPage() {
-  const [stepId, setStepId] = useState(1);
-  const [feedback, setFeedback] = useState("");
-  const [lastResult, setLastResult] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+  const stepId = 1;
 
-  function handleResult(data: any) {
-    setFeedback(data.feedback);
-    setLastResult(data.match);
-    if (data.match) setStepId((prev) => prev + 1);
+  function handleCaptured(imageSrc: string) {
+    navigate("/preview", { state: { stepId, imageSrc } });
   }
 
   return (
     <div style={{ maxWidth: 420, margin: "24px auto", padding: 16 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ margin: 0 }}>Step {stepId}</h2>
-        {lastResult !== null && (
-          <div
-            style={{
-              padding: "8px 16px",
-              borderRadius: 8,
-              backgroundColor: lastResult ? "#28a745" : "#dc3545",
-              color: "white",
-              fontWeight: "bold",
-              fontSize: 18,
-            }}
-          >
-            {lastResult ? "TRUE" : "FALSE"}
-          </div>
-        )}
-      </div>
+      <h2>Step {stepId}</h2>
 
-      <CameraCapture stepId={stepId} onResult={handleResult} />
-
-      {feedback && (
-        <div
-          style={{
-            marginTop: 16,
-            padding: 12,
-            borderRadius: 8,
-            backgroundColor: "#f3f3f3",
-          }}
-        >
-          {feedback}
-        </div>
-      )}
+      <CameraCapture
+        stepId={stepId}
+        onCaptured={handleCaptured}
+      />
     </div>
   );
 }
