@@ -16,15 +16,8 @@ from app.services.detector import get_detector, VerificationResult
 
 logger = logging.getLogger(__name__)
 
-# Lazy import siamese detector to avoid loading PyTorch if not needed
-_siamese_detector = None
-
 def get_siamese():
-    global _siamese_detector
-    if _siamese_detector is None:
-        from app.services.siamese_detector import get_siamese_detector
-        _siamese_detector = get_siamese_detector()
-    return _siamese_detector
+    raise HTTPException(status_code=501, detail="Siamese detector is disabled. Use detector_type=claude.")
 
 router = APIRouter(prefix="/verify", tags=["verification"])
 

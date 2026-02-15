@@ -290,6 +290,12 @@ TUTORIAL_PROMPTS = {
     "treehacks": """For Lego pieces: Focus on the overall shape and color of the assembled pieces.""",
 }
 
+# Map Supabase UUIDs to folder/prompt names
+TUTORIAL_ID_MAP = {
+    "407d67a9-47f0-48c2-8e2c-d484b2953e37": "treehacks",
+    "7cbceca1-47bc-444b-941a-3e34da230430": "nutsbolts",
+}
+
 # Cache detectors by tutorial_id
 _detectors: dict[str, StepDetector] = {}
 
@@ -297,13 +303,15 @@ _detectors: dict[str, StepDetector] = {}
 def get_detector(tutorial_id: str = "treehacks") -> StepDetector:
     """Get or create the detector instance for a specific tutorial."""
     global _detectors
-    if tutorial_id not in _detectors:
+    # Resolve UUID to folder name if needed
+    resolved_id = TUTORIAL_ID_MAP.get(tutorial_id, tutorial_id)
+    if resolved_id not in _detectors:
         base_dir = os.getenv("REFERENCE_DIR", "./reference_images")
         # Look for tutorial-specific subfolder, fall back to base dir
-        tutorial_dir = Path(base_dir) / tutorial_id
+        tutorial_dir = Path(base_dir) / resolved_id
         if tutorial_dir.exists():
             reference_dir = str(tutorial_dir)
         else:
             reference_dir = base_dir
-        _detectors[tutorial_id] = StepDetector(reference_dir, tutorial_id=tutorial_id)
-    return _detectors[tutorial_id]
+        _detectors[resolved_id] = StepDetector(reference_dir, tutorial_id=resolved_id)
+    return _detectors[resolved_id]
